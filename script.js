@@ -367,3 +367,46 @@ function makePlaceholder(text){
 renderOverview();
 renderGrid();
 bindEvents();
+
+// clocks & visitors
+function formatTZ(tz){
+  const now = new Date();
+  try{
+    return new Intl.DateTimeFormat('zh-CN',{
+      timeZone: tz,
+      hour12:false,
+      year:'numeric',month:'2-digit',day:'2-digit',
+      hour:'2-digit',minute:'2-digit',second:'2-digit'
+    }).format(now);
+  }catch(e){
+    const utc = now.getTime() + now.getTimezoneOffset()*60000;
+    const offsetMap = { 'Asia/Shanghai': 8, 'Asia/Dubai': 4 };
+    const off = offsetMap[tz] ?? 0;
+    const d = new Date(utc + off*3600000);
+    const pad = n=>String(n).padStart(2,'0');
+    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+  }
+}
+
+function tickClocks(){
+  const cn = document.getElementById('timeCN');
+  const dxb = document.getElementById('timeDXB');
+  if(cn) cn.textContent = formatTZ('Asia/Shanghai');
+  if(dxb) dxb.textContent = formatTZ('Asia/Dubai');
+}
+setInterval(tickClocks,1000); tickClocks();
+
+async function updateVisit(peek){
+  try{
+    const url = '/api/visit' + (peek?'?peek=1':'');
+    const resp = await fetch(url,{cache:'no-store'});
+    if(!resp.ok) throw new Error('visit api error');
+    const data = await resp.json();
+    const el = document.getElementById('visitCount');
+    if(el && typeof data.count==='number') el.textContent = String(data.count);
+  }catch(e){
+    // ignore
+  }
+}
+updateVisit(false);
+setInterval(()=>updateVisit(true),30000);

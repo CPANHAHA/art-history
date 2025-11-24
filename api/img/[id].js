@@ -1,6 +1,6 @@
-export const config = { runtime: 'nodejs' };
+exports.config = { runtime: 'nodejs' };
 
-const IMG_MAP: Record<string, string> = {
+const IMG_MAP = {
   classical: 'https://upload.wikimedia.org/wikipedia/commons/7/79/Venus_de_Milo_Louvre_Ma399_n4.jpg',
   byzantine: 'https://upload.wikimedia.org/wikipedia/commons/7/72/San_Vitale%2C_Ravenna%2C_mosaico_interno.jpg',
   romanesque: 'https://upload.wikimedia.org/wikipedia/commons/9/90/Conques_StFoy_Tympan.jpg',
@@ -28,25 +28,19 @@ const IMG_MAP: Record<string, string> = {
   contemporary: 'https://upload.wikimedia.org/wikipedia/commons/2/23/Jeff_Koons_Balloon_Dog_%28Magenta%29.jpg',
 };
 
-export default async function handler(req: any, res: any) {
-  const { id } = req.query;
+module.exports = async function(req, res){
+  const id = req.query && req.query.id;
   const url = IMG_MAP[String(id)];
-  if (!url) {
-    res.status(404).send('Not Found');
-    return;
-  }
+  if (!url) { res.status(404).send('Not Found'); return; }
   try {
     const resp = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0' } });
-    if (!resp.ok) {
-      res.status(resp.status).send('Upstream error');
-      return;
-    }
+    if (!resp.ok) { res.status(resp.status).send('Upstream error'); return; }
     const ct = resp.headers.get('content-type') || 'image/jpeg';
     const buf = Buffer.from(await resp.arrayBuffer());
     res.setHeader('Content-Type', ct);
     res.setHeader('Cache-Control', 'public, max-age=86400');
     res.status(200).send(buf);
-  } catch (e: any) {
+  } catch (e) {
     res.status(502).send('Bad Gateway');
   }
 }

@@ -1,6 +1,7 @@
 import os
 import urllib.request
 from http.server import SimpleHTTPRequestHandler, HTTPServer
+from urllib.parse import urlparse, parse_qs
 
 ROOT = os.path.dirname(__file__)
 CACHE_DIR = os.path.join(ROOT, 'cache')
@@ -76,6 +77,29 @@ class Handler(SimpleHTTPRequestHandler):
       self.send_header('Cache-Control','public, max-age=86400')
       self.end_headers()
       self.wfile.write(data)
+      return
+    if self.path.startswith('/api/visit'):
+      qs = parse_qs(urlparse(self.path).query)
+      peek = 'peek' in qs
+      cnt_path = os.path.join(CACHE_DIR,'visits.txt')
+      count = 0
+      if os.path.exists(cnt_path):
+        try:
+          with open(cnt_path,'r') as f:
+            count = int(f.read().strip() or '0')
+        except: count = 0
+      if not peek:
+        count += 1
+        try:
+          with open(cnt_path,'w') as f:
+            f.write(str(count))
+        except: pass
+      body = ('{"count":'+str(count)+'}').encode('utf-8')
+      self.send_response(200)
+      self.send_header('Content-Type','application/json; charset=utf-8')
+      self.send_header('Cache-Control','no-store')
+      self.end_headers()
+      self.wfile.write(body)
       return
     return super().do_GET()
 
