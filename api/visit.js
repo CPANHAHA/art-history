@@ -4,6 +4,7 @@ function getCfg(){
   return {
     url: process.env.SUPABASE_URL,
     key: process.env.SUPABASE_SERVICE_ROLE_KEY,
+    anon: process.env.SUPABASE_ANON_KEY,
   };
 }
 
@@ -14,7 +15,7 @@ async function supabaseIncrease(){
   const id = 1;
   try {
     const headers = {
-      apikey: key,
+      apikey: (process.env.SUPABASE_ANON_KEY || key),
       Authorization: `Bearer ${key}`,
       'Content-Type': 'application/json',
       Prefer: 'return=representation',
@@ -43,7 +44,7 @@ async function supabaseGet(){
   const id = 1;
   try {
     const headers = {
-      apikey: key,
+      apikey: (process.env.SUPABASE_ANON_KEY || key),
       Authorization: `Bearer ${key}`,
     };
     const curResp = await fetch(`${url}/rest/v1/${table}?id=eq.${id}&select=total`, { headers });
