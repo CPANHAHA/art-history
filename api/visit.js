@@ -25,12 +25,13 @@ async function supabaseIncrease(){
     const rows = await curResp.json();
     const current = Array.isArray(rows) && rows[0] && typeof rows[0].total === 'number' ? rows[0].total : 0;
     const next = current + 1;
-    const upsertResp = await fetch(`${url}/rest/v1/${table}?on_conflict=id`, {
-      method: 'POST',
+    // use PATCH to update row by id to avoid 409 conflicts
+    const patchResp = await fetch(`${url}/rest/v1/${table}?id=eq.${id}`, {
+      method: 'PATCH',
       headers,
-      body: JSON.stringify([{ id, total: next }]),
+      body: JSON.stringify({ total: next }),
     });
-    if (!upsertResp.ok) return current; // 保底返回当前值
+    if (!patchResp.ok) return current; // 保底返回当前值
     return next;
   } catch {
     return 0;
@@ -67,13 +68,13 @@ module.exports = async function(req, res){
     try{
       const table = 'visit_counter';
       const id = 1;
-      const headers = { apikey: key, Authorization: `Bearer ${key}` };
+      const headers = { apikey: (process.env.SUPABASE_ANON_KEY || key), Authorization: `Bearer ${key}` };
       const curResp = await fetch(`${url}/rest/v1/${table}?id=eq.${id}&select=total`, { headers });
       out.getStatus = curResp.status;
-      // try a no-op upsert to see status
-      const testHeaders = { apikey: key, Authorization: `Bearer ${key}`, 'Content-Type': 'application/json', Prefer: 'return=minimal' };
-      const upsertResp = await fetch(`${url}/rest/v1/${table}?on_conflict=id`, { method:'POST', headers: testHeaders, body: JSON.stringify([{ id, total: 0 }]) });
-      out.upsertStatus = upsertResp.status;
+      // try a no-op patch to see write status
+      const testHeaders = { apikey: (process.env.SUPABASE_ANON_KEY || key), Authorization: `Bearer ${key}`, 'Content-Type': 'application/json', Prefer: 'return=minimal' };
+      const writeResp = await fetch(`${url}/rest/v1/${table}?id=eq.${id}`, { method:'PATCH', headers: testHeaders, body: JSON.stringify({ total: 0 }) });
+      out.upsertStatus = writeResp.status;
     }catch(e){
       out.error = true;
     }
