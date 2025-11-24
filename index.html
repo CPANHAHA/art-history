@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>西方美术发展史</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <h1>西方美术发展史</h1>
+    <p class="tagline">为学生与美术研究者提供快速了解与查阅</p>
+  </header>
+  <main>
+    <section id="overview" class="section">
+      <h2>概括介绍</h2>
+      <div class="overview-content"></div>
+    </section>
+    <section id="periods" class="section">
+      <h2>分期与代表作品</h2>
+      <div class="period-grid" id="periodGrid"></div>
+    </section>
+  </main>
+  <div class="modal" id="artModal" aria-hidden="true" role="dialog">
+    <div class="modal-backdrop" data-dismiss="modal"></div>
+    <div class="modal-content" role="document">
+      <button class="modal-close" aria-label="关闭" data-dismiss="modal">×</button>
+      <div class="modal-body" id="modalBody"></div>
+    </div>
+  </div>
+  <footer class="site-footer">
+    <small>图片版权归原作者/机构所有（多来源于维基共享资源）。本页仅用于学习与研究。</small>
+  </footer>
+  <script src="script.js"></script>
+</body>
+</html>
