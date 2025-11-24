@@ -7,54 +7,53 @@ function getCfg(){
   };
 }
 
-async function ensureBucket(url, key, bucket){
-  const h = { apikey: key, Authorization: `Bearer ${key}` };
-  const check = await fetch(`${url}/storage/v1/bucket/${bucket}`, { headers: h });
-  if (check.ok) return true;
-  const create = await fetch(`${url}/storage/v1/bucket`, {
-    method: 'POST',
-    headers: { ...h, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name: bucket, public: false })
-  });
-  return create.ok;
-}
-
-async function storageGet(url, key, bucket, object){
-  const h = { apikey: key, Authorization: `Bearer ${key}` };
-  const resp = await fetch(`${url}/storage/v1/object/${bucket}/${object}`, { headers: h });
-  if (!resp.ok) return null;
-  const txt = await resp.text();
-  try { return JSON.parse(txt); } catch { return null; }
-}
-
-async function storagePut(url, key, bucket, object, data){
-  const h = { apikey: key, Authorization: `Bearer ${key}`, 'Content-Type': 'application/json', 'x-upsert': 'true' };
-  const resp = await fetch(`${url}/storage/v1/object/${bucket}/${object}`, { method: 'POST', headers: h, body: JSON.stringify(data) });
-  return resp.ok;
-}
-
 async function supabaseIncrease(){
   const { url, key } = getCfg();
   if (!url || !key) return 0;
-  const bucket = 'site-metrics';
-  const object = 'visit_counter.json';
-  await ensureBucket(url, key, bucket);
-  const cur = await storageGet(url, key, bucket, object);
-  const current = cur && typeof cur.total === 'number' ? cur.total : 0;
-  const next = current + 1;
-  await storagePut(url, key, bucket, object, { total: next });
-  return next;
+  const table = 'visit_counter';
+  const id = 1;
+  try {
+    const headers = {
+      apikey: key,
+      Authorization: `Bearer ${key}`,
+      'Content-Type': 'application/json',
+      Prefer: 'return=representation',
+    };
+    const curResp = await fetch(`${url}/rest/v1/${table}?id=eq.${id}&select=total`, { headers });
+    if (!curResp.ok) return 0;
+    const rows = await curResp.json();
+    const current = Array.isArray(rows) && rows[0] && typeof rows[0].total === 'number' ? rows[0].total : 0;
+    const next = current + 1;
+    const upsertResp = await fetch(`${url}/rest/v1/${table}?on_conflict=id`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify([{ id, total: next }]),
+    });
+    if (!upsertResp.ok) return current; // 保底返回当前值
+    return next;
+  } catch {
+    return 0;
+  }
 }
 
 async function supabaseGet(){
   const { url, key } = getCfg();
   if (!url || !key) return 0;
-  const bucket = 'site-metrics';
-  const object = 'visit_counter.json';
-  await ensureBucket(url, key, bucket);
-  const cur = await storageGet(url, key, bucket, object);
-  const current = cur && typeof cur.total === 'number' ? cur.total : 0;
-  return current;
+  const table = 'visit_counter';
+  const id = 1;
+  try {
+    const headers = {
+      apikey: key,
+      Authorization: `Bearer ${key}`,
+    };
+    const curResp = await fetch(`${url}/rest/v1/${table}?id=eq.${id}&select=total`, { headers });
+    if (!curResp.ok) return 0;
+    const rows = await curResp.json();
+    const current = Array.isArray(rows) && rows[0] && typeof rows[0].total === 'number' ? rows[0].total : 0;
+    return current;
+  } catch {
+    return 0;
+  }
 }
 
 module.exports = async function(req, res){
