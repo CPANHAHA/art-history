@@ -1,4 +1,4 @@
-export const config = { runtime: 'nodejs18.x' };
+export const config = { runtime: 'nodejs' };
 
 const IMG_MAP: Record<string, string> = {
   classical: 'https://upload.wikimedia.org/wikipedia/commons/7/79/Venus_de_Milo_Louvre_Ma399_n4.jpg',
@@ -50,4 +50,3 @@ export default async function handler(req: any, res: any) {
     res.status(502).send('Bad Gateway');
   }
 }
-
