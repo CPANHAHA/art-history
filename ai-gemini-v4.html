@@ -849,7 +849,12 @@
   const elCatTabs = document.getElementById('categoryTabs');
   function renderTabs() {
     elCatTabs.innerHTML = '';
-    const all = [{ id: 'ALL', name: '全部' }, ...categories];
+    const sortedCats = [...categories].sort((a,b)=>{
+      if (a.id==='qita' && b.id!=='qita') return 1;
+      if (b.id==='qita' && a.id!=='qita') return -1;
+      return String(a.name).localeCompare(String(b.name));
+    });
+    const all = [{ id: 'ALL', name: '全部' }, ...sortedCats];
     all.forEach(c => {
       const btn = document.createElement('button');
       btn.className = `tab-btn ${c.id === currentCatFilter ? 'active' : ''}`;
