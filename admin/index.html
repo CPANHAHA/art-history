@@ -6,11 +6,18 @@
   <title>管理后台 · Web3大航海</title>
   <link rel="stylesheet" href="../styles.css">
   <style>
+    :root{ --bg-app:#020617; --bg-card:#1e293b; --bg-sidebar:#0f172a; --text-main:#f1f5f9; --text-muted:#94a3b8; --accent:#38bdf8; --border:#334155 }
+    body{ background:var(--bg-app); color:var(--text-main) }
     .container{max-width:980px;margin:0 auto;padding:28px 20px}
+    .card{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:16px;margin:12px 0}
+    .section-title{font-size:1.3rem;font-weight:700;margin-bottom:12px}
     table{width:100%;border-collapse:collapse}
-    th,td{border:1px solid var(--border);padding:8px}
-    th{background:var(--card)}
+    th,td{border:1px solid var(--border);padding:10px}
+    th{background:var(--bg-sidebar)}
     .actions{display:flex;gap:8px}
+    .btn{padding:.5rem 1rem;border-radius:8px;border:1px solid var(--border);background:var(--bg-sidebar);color:var(--text-main);cursor:pointer}
+    .btn:hover{border-color:var(--accent);color:var(--accent)}
+    .input{background:transparent;color:var(--text-main);border:1px solid var(--border);padding:8px;border-radius:8px}
   </style>
 </head>
 <body>
@@ -23,19 +30,26 @@
     </nav>
   </header>
   <main class="container">
-    <section class="section" style="padding-left:0">
-      <h2>待审核用户</h2>
+    <section class="card">
+      <div class="section-title">待审核用户</div>
       <table>
         <thead><tr><th>用户名</th><th>创建时间</th><th>操作</th></tr></thead>
         <tbody id="pendingTbody"></tbody>
       </table>
       <div id="pendingMsg" class="help"></div>
     </section>
-    <section class="section" style="padding-left:0">
-      <h2>黑名单管理（恢复为 member）</h2>
-      <div class="field"><label for="recoverId">用户 ID</label><input id="recoverId" placeholder="粘贴用户ID"></div>
-      <div class="actions"><button class="btn" id="btnRecover">恢复</button></div>
+    <section class="card">
+      <div class="section-title">黑名单管理（恢复为 member）</div>
+      <div style="display:flex;gap:8px"><input id="recoverId" class="input" placeholder="粘贴用户ID"><button class="btn" id="btnRecover">恢复</button></div>
       <div id="recoverMsg" class="help"></div>
+    </section>
+    <section class="card">
+      <div class="section-title">已注册用户</div>
+      <table>
+        <thead><tr><th>用户名</th><th>状态</th><th>创建时间</th></tr></thead>
+        <tbody id="usersTbody"></tbody>
+      </table>
+      <div id="usersMsg" class="help"></div>
     </section>
   </main>
   <footer class="site-footer">
@@ -54,4 +68,3 @@
   <script src="../admin.js"></script>
 </body>
 </html>
-
