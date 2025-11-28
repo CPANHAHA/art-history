@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>管理后台 · Web3大航海</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .container{max-width:980px;margin:0 auto;padding:28px 20px}
+    table{width:100%;border-collapse:collapse}
+    th,td{border:1px solid var(--border);padding:8px}
+    th{background:var(--card)}
+    .actions{display:flex;gap:8px}
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <h1>管理后台</h1>
+    <nav class="nav">
+      <a href="/">主页</a>
+      <a href="/ai-invest">AI投研助手</a>
+      <a href="/admin">后台</a>
+    </nav>
+  </header>
+  <main class="container">
+    <section class="section" style="padding-left:0">
+      <h2>待审核用户</h2>
+      <table>
+        <thead><tr><th>用户名</th><th>创建时间</th><th>操作</th></tr></thead>
+        <tbody id="pendingTbody"></tbody>
+      </table>
+      <div id="pendingMsg" class="help"></div>
+    </section>
+    <section class="section" style="padding-left:0">
+      <h2>黑名单管理（恢复为 member）</h2>
+      <div class="field"><label for="recoverId">用户 ID</label><input id="recoverId" placeholder="粘贴用户ID"></div>
+      <div class="actions"><button class="btn" id="btnRecover">恢复</button></div>
+      <div id="recoverMsg" class="help"></div>
+    </section>
+  </main>
+  <footer class="site-footer">
+    <small>仅管理员可访问；所有操作将记录于数据库。</small>
+  </footer>
+  <script>
+    (async function(){
+      try{
+        const r = await fetch('/api/session');
+        const d = await r.json();
+        const ok = d && d.loggedIn && d.user && d.user.status==='admin';
+        if (!ok){ alert('仅管理员可访问后台'); location.href='/'; return; }
+      }catch(e){ location.href='/'; }
+    })();
+  </script>
+  <script src="admin.js"></script>
+</body>
+</html>
+

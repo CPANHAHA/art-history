@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI投研助手 · AI分析与导入</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .container{max-width:980px;margin:0 auto;padding:28px 20px}
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .field{display:flex;flex-direction:column}
+    .field label{font-size:14px;color:var(--muted);margin-bottom:6px}
+    .field input,.field textarea, .field select{background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:10px;padding:10px;font-size:15px}
+    .actions{margin-top:18px;display:flex;gap:12px;flex-wrap:wrap}
+    .btn{background:#223;color:#eaeaf0;border:1px solid var(--border);border-radius:10px;padding:8px 14px;font-size:14px;cursor:pointer}
+    .btn.primary{background:#1c2a38;border-color:#2a4a6a;color:#cfe7ff}
+    .help{color:var(--muted);font-size:13px;margin-top:6px}
+    .preview{margin-top:24px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px}
+    .pre{white-space:pre-wrap;word-break:break-word;background:#111;border:1px solid var(--border);padding:12px;border-radius:10px}
+    .error{color:#ffb4b4}
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <h1>AI投研助手</h1>
+    <p class="tagline">复制固定提示词 → 外部AI生成JSON → 手动导入与预览</p>
+    <nav class="nav">
+      <a href="/">主页</a>
+      <a href="/reports.html">报告列表</a>
+      <a href="/invest.html">AI分析</a>
+    </nav>
+  </header>
+  <main class="container">
+    <section class="section" style="padding-left:0">
+      <h2>AI分析（外部生成）</h2>
+      <div class="form-grid">
+        <div class="field">
+          <label for="projectName">项目名称（必填）</label>
+          <input id="projectName" placeholder="例如：AURA Protocol">
+        </div>
+        <div class="field">
+          <label for="ticker">ticker（可填“无/未知”）</label>
+          <input id="ticker" placeholder="例如：AURA 或 无/未知">
+        </div>
+        <div class="field">
+          <label for="twitter">项目官推（选填，@xxx 或 URL）</label>
+          <input id="twitter" placeholder="例如：@project 或 https://x.com/project">
+        </div>
+        <div class="field">
+          <label for="website">项目官网（选填）</label>
+          <input id="website" placeholder="例如：https://example.org">
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn primary" id="copyPrompt">复制固定 Prompt</button>
+        <span class="help">复制后，请在 GROK 等外部 AI 中生成严格 JSON 报告文件。</span>
+      </div>
+    </section>
+
+    <section class="section" style="padding-left:0">
+      <h2>导入与预览</h2>
+      <div class="actions">
+        <input type="file" id="fileInput" accept="application/json" class="btn">
+        <button class="btn" id="parseJson">解析并预览</button>
+      </div>
+      <p class="help">仅校验项目名称存在；其余字段允许缺失，缺失将显示为“未知”或空。</p>
+      <div id="importError" class="error"></div>
+      <div id="importPreview" class="preview" style="display:none"></div>
+    </section>
+  </main>
+  <footer class="site-footer">
+    <small>本页仅用于本地演示与验证；不进行在线抓取与模型调用。</small>
+  </footer>
+  <script>
+    (async function(){
+      try{
+        const resp = await fetch('/api/session');
+        const data = await resp.json();
+        const ok = data && data.loggedIn && (data.user && (data.user.status==='member' || data.user.status==='admin'));
+        if (!ok){
+          alert('仅会员或管理员可访问 AI 投研助手');
+          location.href = '/';
+          return;
+        }
+      }catch(e){ location.href = '/'; }
+    })();
+  </script>
+  <script src="invest.js"></script>
+</body>
+</html>

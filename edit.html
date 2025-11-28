@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI投研助手 · 编辑报告</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .container{max-width:980px;margin:0 auto;padding:28px 20px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .field{display:flex;flex-direction:column}
+    .field label{font-size:14px;color:var(--muted);margin-bottom:6px}
+    .field input,.field textarea,.field select{background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:10px;padding:10px;font-size:15px}
+    .actions{margin-top:18px;display:flex;gap:12px;flex-wrap:wrap}
+    .btn{background:#223;color:#eaeaf0;border:1px solid var(--border);border-radius:10px;padding:8px 14px;font-size:14px;cursor:pointer}
+    .btn.primary{background:#1c2a38;border-color:#2a4a6a;color:#cfe7ff}
+    .btn.danger{background:#3b1f1f;border-color:#613535;color:#ffb4b4}
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <h1>编辑报告</h1>
+    <p class="tagline">修改类别与内容；保存最近一次编辑副本；支持恢复。</p>
+    <nav class="nav">
+      <a href="/">主页</a>
+      <a href="/reports.html">报告列表</a>
+      <a href="/invest.html">AI分析</a>
+    </nav>
+  </header>
+  <main class="container">
+    <div class="grid">
+      <div class="field"><label>项目名称</label><input id="project_name"></div>
+      <div class="field"><label>类别</label><select id="category"></select></div>
+      <div class="field"><label>AI评分（0–5，可空）</label><input id="ai_rating" type="number" step="1" min="0" max="5"></div>
+      <div class="field"><label>官推</label><input id="twitter_handle"></div>
+      <div class="field"><label>Ticker</label><input id="ticker"></div>
+      <div class="field"><label>Launchpad</label><input id="launchpad"></div>
+      <div class="field"><label>标签短语</label><input id="labels"></div>
+      <div class="field"><label>DEV活跃评分（0–5，可空）</label><input id="dev_activity_rating" type="number" step="1" min="0" max="5"></div>
+      <div class="field" style="grid-column:1/-1"><label>DEV活跃简述</label><textarea id="dev_activity_note" rows="3"></textarea></div>
+      <div class="field" style="grid-column:1/-1"><label>基本信息</label><textarea id="basic_info" rows="4"></textarea></div>
+      <div class="field" style="grid-column:1/-1"><label>团队背景</label><textarea id="team_background" rows="3"></textarea></div>
+      <div class="field" style="grid-column:1/-1"><label>代币机制/功能</label><textarea id="token_mechanism" rows="3"></textarea></div>
+      <div class="field" style="grid-column:1/-1"><label>当下进展/后续规划</label><textarea id="progress_plan" rows="3"></textarea></div>
+      <div class="field" style="grid-column:1/-1"><label>商业潜力</label><textarea id="business_potential" rows="3"></textarea></div>
+      <div class="field" style="grid-column:1/-1"><label>竞品简介</label><textarea id="competitors" rows="3"></textarea></div>
+    </div>
+    <div class="actions">
+      <button class="btn primary" id="saveBtn">保存</button>
+      <button class="btn" id="backBtn">返回列表</button>
+      <button class="btn danger" id="restoreBtn">恢复上次编辑</button>
+    </div>
+  </main>
+  <footer class="site-footer"><small>保存成功后会更新最近一次编辑副本；恢复将应用该副本。</small></footer>
+  <script src="edit.js"></script>
+</body>
+</html>

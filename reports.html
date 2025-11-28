@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI投研助手 · 报告列表</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .container{max-width:1200px;margin:0 auto;padding:28px 20px}
+    .tabs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+    .tab{padding:8px 12px;border:1px solid var(--border);border-radius:999px;cursor:pointer;background:#1b1b20;color:#ddd}
+    .tab.active{background:#1c2a38;border-color:#2a4a6a;color:#cfe7ff}
+    .toolbar{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+    .input{background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:10px;padding:8px 12px}
+    .btn{background:#223;color:#eaeaf0;border:1px solid var(--border);border-radius:10px;padding:8px 14px;font-size:14px;cursor:pointer}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+    .card-actions{display:flex;gap:8px;margin-top:8px}
+    .danger{background:#3b1f1f;border-color:#613535;color:#ffb4b4}
+    .muted{color:var(--muted)}
+    .section-title{display:flex;align-items:center;justify-content:space-between}
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <h1>报告列表</h1>
+    <p class="tagline">分类、搜索与排序；支持编辑与删除（软删）。</p>
+    <nav class="nav">
+      <a href="/">主页</a>
+      <a href="/reports.html">报告列表</a>
+      <a href="/invest.html">AI分析</a>
+    </nav>
+  </header>
+  <main class="container">
+    <section class="section" style="padding-left:0">
+      <div class="section-title"><h2>分类</h2><small class="muted">删除类别将把所属报告归入“其他”</small></div>
+      <div class="tabs" id="categoryTabs"></div>
+      <div class="toolbar">
+        <input id="searchInput" class="input" placeholder="搜索项目名称">
+        <select id="sortSelect" class="input">
+          <option value="recent">按最近更新</option>
+          <option value="rating">按评分</option>
+        </select>
+        <button class="btn" id="refreshBtn">刷新</button>
+      </div>
+      <div class="grid" id="reportGrid"></div>
+      <div id="pager" class="toolbar"></div>
+    </section>
+
+    <section class="section" style="padding-left:0">
+      <h2>类别管理</h2>
+      <div id="categoryList"></div>
+      <div class="toolbar">
+        <input id="newCatName" class="input" placeholder="新增类别名称">
+        <button class="btn" id="addCatBtn">新增类别</button>
+      </div>
+    </section>
+  </main>
+  <footer class="site-footer">
+    <small>删除操作将弹窗确认，删除为软删；无登录环境下请谨慎操作。</small>
+  </footer>
+  <script src="reports.js"></script>
+</body>
+</html>

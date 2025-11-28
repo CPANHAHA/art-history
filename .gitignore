@@ -1,0 +1,17 @@
+# macOS
+.DS_Store
+
+# Editor
+.vscode/
+
+# Env
+.env
+
+# Runtime data/cache
+cache/
+data/
+
+# Node serverless build caches (if any in future)
+.next/
+dist/
+node_modules/

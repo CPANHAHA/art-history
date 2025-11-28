@@ -3,14 +3,42 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>西方美术发展史</title>
+  <title>Web3大航海</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <header class="site-header">
-    <h1>西方美术发展史</h1>
-    <p class="tagline">为学生与美术研究者提供快速了解与查阅</p>
+    <h1>Web3大航海</h1>
+    <p class="tagline">聚合投研工具平台 · AI投研助手为首个模块</p>
+    <nav class="nav">
+      <a href="/">主页</a>
+      <a href="/ai-invest">AI投研助手</a>
+      <a id="adminLink" href="/admin" style="display:none">管理后台</a>
+    </nav>
   </header>
+  <section class="section" style="padding:16px 20px">
+    <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start">
+      <div style="flex:1;min-width:280px">
+        <h2>登录</h2>
+        <div class="field"><label for="loginUser">账号</label><input id="loginUser" placeholder="6–8位字母或数字"></div>
+        <div class="field"><label for="loginPass">密码</label><input id="loginPass" type="password" placeholder="8位"></div>
+        <div class="actions"><button class="btn primary" id="btnLogin">登录</button><button class="btn" id="btnLogout">退出登录</button></div>
+        <div id="loginMsg" class="help"></div>
+      </div>
+      <div style="flex:1;min-width:280px">
+        <h2>申请成为会员</h2>
+        <div class="field"><label for="regUser">账号</label><input id="regUser" placeholder="6–8位字母或数字"></div>
+        <div class="field"><label for="regPass">密码</label><input id="regPass" type="password" placeholder="8位"></div>
+        <div class="actions"><button class="btn" id="btnRegister">提交申请</button></div>
+        <div id="regMsg" class="help"></div>
+      </div>
+      <div style="flex:1;min-width:280px">
+        <h2>工具入口</h2>
+        <p class="help">仅会员与管理员可使用 AI 投研助手。</p>
+        <div class="actions"><a class="btn" href="/ai-invest">进入 AI 投研助手</a></div>
+      </div>
+    </div>
+  </section>
   <aside class="sidebar-left" aria-label="站点信息">
     <div class="side-block">
       <h3 class="side-title">时间</h3>
@@ -40,8 +68,9 @@
     </div>
   </div>
   <footer class="site-footer">
-    <small>图片版权归原作者/机构所有（多来源于维基共享资源）。本页仅用于学习与研究。</small>
+    <small>基于 Supabase 用户系统与 Vercel 无服务器架构。</small>
   </footer>
   <script src="script.js"></script>
+  <script src="auth.js"></script>
 </body>
 </html>

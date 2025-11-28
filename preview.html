@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AURA Protocol 预览卡片</title>
+  <style>
+    :root {
+      --bg-card: #0f172a;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent-dim: rgba(56, 189, 248, 0.1);
+      --score-high: #22c55e;
+      --score-mid: #eab308;
+      --danger-bg: rgba(239, 68, 68, 0.1);
+      --border: #1e293b;
+    }
+    body {
+      background: #020617;
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      padding: 40px;
+      display: flex;
+      justify-content: center;
+    }
+    .preview-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      max-width: 800px;
+      width: 100%;
+      padding: 32px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    }
+    .hero-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+      margin-bottom: 24px;
+    }
+    .hero-meta {
+      display: flex;
+      gap: 12px;
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .hero-title {
+      font-size: 32px;
+      font-weight: 700;
+      margin: 0 0 12px 0;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      color: #fff;
+    }
+    .ticker-badge {
+      background: var(--border);
+      font-size: 14px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      vertical-align: middle;
+      color: var(--text-muted);
+      font-weight: normal;
+    }
+    .tagline-box {
+      display: inline-block;
+      background: var(--accent-dim);
+      color: var(--accent);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    .focus-box {
+      background: linear-gradient(to right, rgba(56, 189, 248, 0.05), transparent);
+      border-left: 4px solid var(--accent);
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      border-radius: 0 8px 8px 0;
+    }
+    .focus-title {
+      color: var(--accent);
+      font-weight: 600;
+      font-size: 15px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .focus-list {
+      margin: 0;
+      padding-left: 20px;
+      color: #e2e8f0;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+    .focus-list li { margin-bottom: 4px; }
+    .score-dashboard {
+      background: #1e293b;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 30px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    .score-main {
+      grid-column: span 2;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding-bottom: 16px;
+      margin-bottom: 8px;
+    }
+    .score-big-val { font-size: 28px; font-weight: 700; color: var(--score-high); }
+    .score-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px 32px;
+    }
+    .score-item-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+    .progress-bg {
+      height: 6px;
+      background: #334155;
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .progress-fill { height: 100%; border-radius: 99px; }
+    .section-heading {
+      font-size: 18px;
+      font-weight: 600;
+      color: #fff;
+      margin: 30px 0 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-heading::before {
+      content: '';
+      display: block;
+      width: 4px;
+      height: 18px;
+      background: var(--text-muted);
+      border-radius: 2px;
+    }
+    p { font-size: 15px; line-height: 1.7; color: #cbd5e1; margin-bottom: 16px; }
+  </style>
+  </head>
+  <body>
+    <div class="preview-card">
+      <div class="hero-header">
+        <div class="hero-meta">
+          <span>ICM 赛道</span> • <span>更新于 2024-05-20</span>
+        </div>
+        <h1 class="hero-title">
+          AURA Protocol
+          <span class="ticker-badge">TICKER: AURA</span>
+        </h1>
+        <div class="tagline-box">
+          面向 DeFi 的去中心化 AI 风控层基础设施
+        </div>
+      </div>
+
+      <div class="focus-box">
+        <div class="focus-title">🔥 当下重点关注 (Focus Points)</div>
+        <ul class="focus-list">
+          <li>代币 TGE 临近（预计 2 周内），当前测试网活跃度极高。</li>
+          <li>注意观察其与 Uniswap V4 Hook 的集成进展，这是核心叙事点。</li>
+          <li>早期投资机构包含 Paradigm，解锁条款需二次确认。</li>
+        </ul>
+      </div>
+
+      <div class="score-dashboard">
+        <div class="score-main">
+          <div>
+            <div style="font-size:13px;color:#94a3b8">AI 综合评分</div>
+            <div style="font-size:13px;color:#94a3b8;margin-top:4px;">评价：基础扎实，叙事匹配度极高</div>
+          </div>
+          <div class="score-big-val">4.2 <span style="font-size:16px;color:#94a3b8">/ 5.0</span></div>
+        </div>
+        <div class="score-grid">
+          <div class="score-item">
+            <div class="score-item-label"><span>叙事匹配度</span> <span style="color:var(--score-high)">0.9</span></div>
+            <div class="progress-bg"><div class="progress-fill" style="width:90%; background:var(--score-high)"></div></div>
+          </div>
+          <div class="score-item">
+            <div class="score-item-label"><span>产品与技术</span> <span style="color:var(--score-mid)">0.7</span></div>
+            <div class="progress-bg"><div class="progress-fill" style="width:70%; background:var(--score-mid)"></div></div>
+          </div>
+          <div class="score-item">
+            <div class="score-item-label"><span>团队实力</span> <span style="color:var(--score-high)">0.85</span></div>
+            <div class="progress-bg"><div class="progress-fill" style="width:85%; background:var(--score-high)"></div></div>
+          </div>
+          <div class="score-item">
+            <div class="score-item-label"><span>市场潜力</span> <span style="color:var(--score-high)">0.8</span></div>
+            <div class="progress-bg"><div class="progress-fill" style="width:80%; background:var(--score-high)"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-heading">项目简介</div>
+      <p>
+        Aura Protocol 是一个专注于为 DeFi 协议提供实时风险评估的去中心化网络。它利用机器学习模型分析链上交易数据，旨在解决当前 DeFi 借贷协议中过度依赖超额抵押的问题。
+      </p>
+      <p>
+        核心特点在于其独特的验证节点网络，该网络允许任何人运行风险模型并获得代币奖励，从而实现了风控层的去中心化。
+      </p>
+    </div>
+  </body>
+</html>
