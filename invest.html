@@ -43,55 +43,22 @@
       </div>
     </div>
   </nav>
-  <div class="hero">
-    <div class="container">
-      <h1>AI投研助手</h1>
-      <p>复制固定提示词，在外部 AI 生成 JSON 文件；本页导入并预览，便于统一入库。</p>
-    </div>
-  </div>
-  <main class="container">
-    <section class="card">
-      <div class="section-title">分类管理</div>
-      <div class="actions"><input id="newCategoryName" class="btn" placeholder="新分类名称"><button class="btn" id="btnAddCategory">新增分类</button></div>
-      <div id="categoryMsg" style="color:var(--text-muted);font-size:.9rem"></div>
-      <div id="categoryList" class="preview"></div>
-    </section>
-    <section class="card">
-      <div class="section-title">AI分析（外部生成）</div>
-      <div class="grid">
-        <div class="field"><label for="projectName">项目名称（必填）</label><input id="projectName" placeholder="例如：AURA Protocol"></div>
-        <div class="field"><label for="ticker">ticker（可填“无/未知”）</label><input id="ticker" placeholder="例如：AURA 或 无/未知"></div>
-        <div class="field"><label for="twitter">项目官推（选填，@xxx 或 URL）</label><input id="twitter" placeholder="例如：@project 或 https://x.com/project"></div>
-        <div class="field"><label for="website">项目官网（选填）</label><input id="website" placeholder="例如：https://example.org"></div>
-      </div>
-      <div class="actions"><button class="btn btn-primary" id="copyPrompt">复制固定 Prompt</button><span style="color:var(--text-muted);font-size:.9rem">复制后，请在外部 AI 中生成严格 JSON 报告文件。</span></div>
-    </section>
-    <section class="card">
-      <div class="section-title">导入与预览</div>
-      <div class="actions"><input type="file" id="fileInput" accept="application/json" class="btn"><button class="btn" id="parseJson">解析并预览</button></div>
-      <p style="color:var(--text-muted);font-size:.9rem">仅校验项目名称存在；其余字段允许缺失，缺失将显示为“未知”或空。</p>
-      <div id="importError" class="error"></div>
-      <div id="importPreview" class="preview" style="display:none"></div>
-    </section>
-    <section class="card">
-      <div class="section-title">报告列表</div>
-      <div class="actions">
-        <select id="filterCategory" class="btn"></select>
-        <input id="filterSearch" class="btn" placeholder="搜索项目名">
-        <select id="filterSort" class="btn"><option value="recent">按最近更新</option><option value="rating">按评分</option></select>
-        <button class="btn" id="btnReloadReports">刷新</button>
-      </div>
-      <div id="reportsList" class="preview"></div>
-    </section>
+  <main style="height: calc(100vh - 70px);">
+    <iframe id="geminiFrame" src="/ai-gemini-v4.html" style="width:100%;height:100%;border:0;background:#0b1220"></iframe>
   </main>
   <script>
     (async function(){
-      try{ const r = await fetch('/api/session'); const d = await r.json(); const ok = d && d.loggedIn && d.user && (d.user.status==='member' || d.user.status==='admin'); if (!ok){ alert('仅会员或管理员可访问 AI 投研助手'); location.href='/'; return; }
-        const nav=document.getElementById('navActions'); const admin = (d.user.status==='admin') ? '<a href="/admin" class="btn">管理后台</a>' : ''; nav.innerHTML = '<a href="/" class="btn">返回首页</a>' + admin + '<button class="btn" onclick="logout()">退出</button>'; }
-      catch(e){ location.href='/'; }
+      try{
+        const r = await fetch('/api/session');
+        const d = await r.json();
+        const ok = d && d.loggedIn && d.user && (d.user.status==='member' || d.user.status==='admin');
+        if (!ok){ alert('仅会员或管理员可访问 AI 投研助手'); location.href='/'; return; }
+        const nav=document.getElementById('navActions');
+        const admin = (d.user.status==='admin') ? '<a href="/admin" class="btn">管理后台</a>' : '';
+        nav.innerHTML = '<a href="/" class="btn">返回首页</a>' + admin + '<button class="btn" onclick="logout()">退出</button>';
+      }catch(e){ location.href='/'; }
     })();
     function logout(){ fetch('/api/logout',{method:'POST'}).then(()=>{ location.href='/'; }); }
   </script>
-  <script src="invest.js"></script>
 </body>
 </html>
