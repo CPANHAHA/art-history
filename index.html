@@ -1,76 +1,102 @@
-<!doctype html>
-<html lang="zh-Hans">
+<!DOCTYPE html>
+<html lang="zh-CN">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Web3大航海</title>
-  <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <title>Web3大航海 - 聚合投研工具平台</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚓</text></svg>">
+  <style>
+    :root { --bg-app:#020617; --bg-card:#1e293b; --bg-sidebar:#0f172a; --text-main:#f1f5f9; --text-muted:#94a3b8; --accent:#38bdf8; --accent-hover:#0ea5e9; --border:#334155; --radius-md:8px; --radius-lg:12px }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg-app);color:var(--text-main);min-height:100vh;line-height:1.6}
+    .container{max-width:1200px;margin:0 auto;padding:0 20px}
+    .navbar{background:var(--bg-sidebar);border-bottom:1px solid var(--border);padding:1rem 0;position:sticky;top:0;z-index:100}
+    .nav-content{display:flex;justify-content:space-between;align-items:center}
+    .logo{display:flex;align-items:center;gap:12px;font-size:1.5rem;font-weight:700;color:var(--text-main)}
+    .logo-dot{width:10px;height:10px;background:var(--accent);border-radius:50%;box-shadow:0 0 12px var(--accent)}
+    .nav-actions{display:flex;gap:1rem;align-items:center}
+    .btn{padding:.5rem 1rem;border-radius:var(--radius-md);border:1px solid var(--border);background:var(--bg-card);color:var(--text-main);text-decoration:none;font-size:.9rem;font-weight:500;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:.5rem}
+    .btn:hover{border-color:var(--accent);color:var(--accent)}
+    .btn-primary{background:var(--accent);border-color:var(--accent);color:#0b1120}
+    .btn-primary:hover{background:var(--accent-hover);color:#000}
+    .hero{padding:4rem 0;text-align:center;background:radial-gradient(circle at top right,#1e293b 0%,#020617 40%)}
+    .hero h1{font-size:3rem;font-weight:700;margin-bottom:1rem;background:linear-gradient(135deg,var(--accent),#a855f7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .hero p{font-size:1.2rem;color:var(--text-muted);max-width:600px;margin:0 auto 2rem}
+    .tools-section{padding:4rem 0}
+    .section-title{font-size:2rem;font-weight:700;text-align:center;margin-bottom:3rem;color:var(--text-main)}
+    .tools-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:2rem;max-width:800px;margin:0 auto}
+    .tool-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:2rem;text-align:center;transition:all .3s ease;cursor:pointer}
+    .tool-card:hover{border-color:var(--accent);transform:translateY(-4px);box-shadow:0 8px 25px rgba(56,189,248,.15)}
+    .tool-icon{font-size:3rem;margin-bottom:1rem}
+    .tool-title{font-size:1.5rem;font-weight:600;margin-bottom:1rem;color:var(--text-main)}
+    .tool-desc{color:var(--text-muted);margin-bottom:1.5rem}
+    .tool-badge{display:inline-block;background:rgba(34,197,94,.15);color:#4ade80;padding:.25rem .75rem;border-radius:20px;font-size:.8rem;font-weight:600}
+    .user-info{display:flex;align-items:center;gap:.5rem;color:var(--text-muted);font-size:.9rem}
+    .user-role{background:rgba(56,189,248,.15);color:var(--accent);padding:.2rem .6rem;border-radius:12px;font-size:.8rem;font-weight:600}
+    .message{padding:1rem;border-radius:var(--radius-md);margin:1rem 0;text-align:center}
+    .message-success{background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.3);color:#4ade80}
+    .message-error{background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:#f87171}
+    .message-warning{background:rgba(234,179,8,.15);border:1px solid rgba(234,179,8,.3);color:#facc15}
+    @media (max-width:768px){.hero h1{font-size:2rem}.hero p{font-size:1rem}.tools-grid{grid-template-columns:1fr}.nav-content{flex-direction:column;gap:1rem}.nav-actions{flex-wrap:wrap;justify-content:center}}
+  </style>
 </head>
 <body>
-  <header class="site-header">
-    <h1>Web3大航海</h1>
-    <p class="tagline">聚合投研工具平台 · AI投研助手为首个模块</p>
-    <nav class="nav">
-      <a href="/">主页</a>
-      <a href="/ai-invest">AI投研助手</a>
-      <a id="adminLink" href="/admin" style="display:none">管理后台</a>
-    </nav>
-  </header>
-  <section class="section" style="padding:16px 20px">
-    <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start">
-      <div style="flex:1;min-width:280px">
-        <h2>登录</h2>
-        <div class="field"><label for="loginUser">账号</label><input id="loginUser" placeholder="6–8位字母或数字"></div>
-        <div class="field"><label for="loginPass">密码</label><input id="loginPass" type="password" placeholder="8位"></div>
-        <div class="actions"><button class="btn primary" id="btnLogin">登录</button><button class="btn" id="btnLogout">退出登录</button></div>
-        <div id="loginMsg" class="help"></div>
+  <nav class="navbar">
+    <div class="container">
+      <div class="nav-content">
+        <div class="logo"><div class="logo-dot"></div><span>Web3大航海</span></div>
+        <div class="nav-actions" id="navActions"></div>
       </div>
-      <div style="flex:1;min-width:280px">
-        <h2>申请成为会员</h2>
-        <div class="field"><label for="regUser">账号</label><input id="regUser" placeholder="6–8位字母或数字"></div>
-        <div class="field"><label for="regPass">密码</label><input id="regPass" type="password" placeholder="8位"></div>
-        <div class="actions"><button class="btn" id="btnRegister">提交申请</button></div>
-        <div id="regMsg" class="help"></div>
-      </div>
-      <div style="flex:1;min-width:280px">
-        <h2>工具入口</h2>
-        <p class="help">仅会员与管理员可使用 AI 投研助手。</p>
-        <div class="actions"><a class="btn" href="/ai-invest">进入 AI 投研助手</a></div>
+    </div>
+  </nav>
+  <div class="container"><div id="messageContainer"></div></div>
+  <section class="hero">
+    <div class="container">
+      <h1>Web3大航海</h1>
+      <p>聚合投研工具平台 - 助力您在Web3世界的探索之旅</p>
+      <div id="heroActions"></div>
+    </div>
+  </section>
+  <section class="tools-section">
+    <div class="container">
+      <h2 class="section-title">工具模块</h2>
+      <div class="tools-grid">
+        <div class="tool-card" onclick="navigateToTool('ai-invest')">
+          <div class="tool-icon">🤖</div>
+          <h3 class="tool-title">AI 投研助手</h3>
+          <p class="tool-desc">智能分析项目，生成专业投研报告，助您做出更明智的投资决策</p>
+          <span class="tool-badge">会员专属</span>
+        </div>
+        <div class="tool-card" style="opacity:.6;cursor:not-allowed">
+          <div class="tool-icon">🚀</div>
+          <h3 class="tool-title">更多工具</h3>
+          <p class="tool-desc">持续开发中，敬请期待...</p>
+          <span class="tool-badge">即将推出</span>
+        </div>
       </div>
     </div>
   </section>
-  <aside class="sidebar-left" aria-label="站点信息">
-    <div class="side-block">
-      <h3 class="side-title">时间</h3>
-      <p class="side-line"><span>北京时间</span><b id="timeCN">--:--:--</b></p>
-      <p class="side-line"><span>迪拜时间</span><b id="timeDXB">--:--:--</b></p>
-    </div>
-    <div class="side-block">
-      <h3 class="side-title">访问人数</h3>
-      <p class="side-line"><span>当前总计</span><b id="visitCount">--</b></p>
-    </div>
-  </aside>
-  <main>
-    <section id="overview" class="section">
-      <h2>概括介绍</h2>
-      <div class="overview-content"></div>
-    </section>
-    <section id="periods" class="section">
-      <h2>分期与代表作品</h2>
-      <div class="period-grid" id="periodGrid"></div>
-    </section>
-  </main>
-  <div class="modal" id="artModal" aria-hidden="true" role="dialog">
-    <div class="modal-backdrop" data-dismiss="modal"></div>
-    <div class="modal-content" role="document">
-      <button class="modal-close" aria-label="关闭" data-dismiss="modal">×</button>
-      <div class="modal-body" id="modalBody"></div>
-    </div>
-  </div>
-  <footer class="site-footer">
-    <small>基于 Supabase 用户系统与 Vercel 无服务器架构。</small>
-  </footer>
-  <script src="script.js"></script>
-  <script src="auth.js"></script>
+  <script>
+    let currentUser = null;
+    async function init(){ await checkAuthStatus(); renderNavigation(); renderHeroSection(); }
+    async function checkAuthStatus(){
+      try{ const r = await fetch('/api/session'); if (!r.ok) { currentUser=null; return; } const d = await r.json(); currentUser = (d && d.loggedIn) ? (d.user||null) : null; }
+      catch(e){ currentUser=null; }
+    }
+    function renderNavigation(){ const nav=document.getElementById('navActions'); if (!currentUser){ nav.innerHTML = '<button class="btn" onclick="showLoginModal()">登录</button><button class="btn btn-primary" onclick="showRegisterModal()">申请成为会员</button>'; }
+      else { const admin = currentUser.status==='admin' ? '<a href="/admin" class="btn">管理后台</a>' : ''; nav.innerHTML = `<div class="user-info"><span>欢迎，${currentUser.username}</span><span class="user-role">${getStatusText(currentUser.status)}</span></div>${admin}<button class=\"btn\" onclick=\"logout()\">退出</button>`; } }
+    function renderHeroSection(){ const hero=document.getElementById('heroActions'); if (!currentUser){ hero.innerHTML = '<button class="btn btn-primary" onclick="showRegisterModal()" style="font-size:1.1rem;padding:.75rem 2rem">开始探索之旅</button>'; }
+      else if (currentUser.status==='pending'){ hero.innerHTML = '<div class="message message-warning">您的会员申请正在审核中，请耐心等待...</div>'; }
+      else if (currentUser.status==='member' || currentUser.status==='admin'){ hero.innerHTML = '<div class="message message-success">欢迎回来！您可以开始使用所有工具功能</div>'; } }
+    function getStatusText(s){ const m={pending:'审核中',member:'会员',admin:'管理员',blacklisted:'黑名单'}; return m[s]||s; }
+    function navigateToTool(p){ if (!currentUser){ showMessage('请先登录并成为会员','error'); showLoginModal(); return; } if (currentUser.status==='pending'){ showMessage('您的会员申请正在审核中，请耐心等待','warning'); return; } if (currentUser.status==='blacklisted'){ showMessage('您的账号已被加入黑名单','error'); return; } if (currentUser.status==='member' || currentUser.status==='admin'){ location.href='/' + p; } }
+    function showMessage(msg,type){ const c=document.getElementById('messageContainer'); const el=document.createElement('div'); el.className='message message-'+type; el.textContent=msg; c.appendChild(el); setTimeout(()=>{ el.remove(); },5000); }
+    function logout(){ fetch('/api/logout',{method:'POST'}).then(()=>{ currentUser=null; renderNavigation(); renderHeroSection(); showMessage('已成功退出登录','success'); }); }
+    function showLoginModal(){ const u=prompt('请输入账号:'); if (!u) return; const p=prompt('请输入密码:'); if (!p) return; login(u,p); }
+    function showRegisterModal(){ const u=prompt('请输入账号 (6-8位字母或数字):'); if (!u) return; if (!/^[a-zA-Z0-9]{6,8}$/.test(u)){ alert('账号必须是6-8位字母或数字'); return; } const p=prompt('请输入密码 (8位):'); if (!p) return; if (p.length!==8){ alert('密码必须是8位'); return; } register(u,p); }
+    async function login(username,password){ try{ const r=await fetch('/api/login',{ method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({username,password}) }); const d=await r.json(); if (r.ok){ await checkAuthStatus(); renderNavigation(); renderHeroSection(); showMessage('登录成功','success'); } else { showMessage(d.error||'登录失败','error'); } } catch(e){ showMessage('登录失败，请稍后重试','error'); } }
+    async function register(username,password){ try{ const r=await fetch('/api/register',{ method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({username,password}) }); const d=await r.json(); if (r.ok){ showMessage('注册成功，请等待管理员审核','success'); } else { showMessage(d.error||'注册失败','error'); } } catch(e){ showMessage('注册失败，请稍后重试','error'); } }
+    window.addEventListener('load', init);
+  </script>
 </body>
 </html>
