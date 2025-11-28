@@ -1,7 +1,7 @@
 exports.config = { runtime: 'nodejs' };
-const { getUserByUsername } = require('./_lib/supabase');
-const { verifyPassword } = require('./_lib/hash');
-const { sign } = require('./_lib/jwt');
+const { getUserByUsername } = require('../lib/supabase');
+const { verifyPassword } = require('../lib/hash');
+const { sign } = require('../lib/jwt');
 
 function bad(res, msg){ res.setHeader('Cache-Control','no-store'); res.status(400).json({ error: msg }); }
 function ok(res, obj){ res.setHeader('Cache-Control','no-store'); res.status(200).json(obj); }
@@ -36,4 +36,3 @@ module.exports = async function(req, res){
   setSessionCookie(res, token);
   ok(res, { ok: true, user: { username: row.username, status: row.status } });
 }
-

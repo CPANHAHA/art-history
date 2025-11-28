@@ -1,6 +1,6 @@
 exports.config = { runtime: 'nodejs' };
-const { randomSaltHex, hashPassword } = require('./_lib/hash');
-const { insertPendingUser, getUserByUsername } = require('./_lib/supabase');
+const { randomSaltHex, hashPassword } = require('../lib/hash');
+const { insertPendingUser, getUserByUsername } = require('../lib/supabase');
 
 function bad(res, msg){ res.setHeader('Cache-Control','no-store'); res.status(400).json({ error: msg }); }
 function ok(res, obj){ res.setHeader('Cache-Control','no-store'); res.status(200).json(obj); }
@@ -23,4 +23,3 @@ module.exports = async function(req, res){
   if (!row){ bad(res, '注册失败'); return; }
   ok(res, { ok: true, message: '已提交，等待审核' });
 }
-

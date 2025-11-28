@@ -1,5 +1,5 @@
 exports.config = { runtime: 'nodejs' };
-const { getSession } = require('./_lib/guard');
+const { getSession } = require('../lib/guard');
 
 module.exports = async function(req, res){
   const sess = getSession(req);
@@ -7,4 +7,3 @@ module.exports = async function(req, res){
   if (!sess){ res.status(200).json({ loggedIn: false }); return; }
   res.status(200).json({ loggedIn: true, user: { username: sess.username, status: sess.status } });
 }
-

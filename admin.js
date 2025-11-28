@@ -13,7 +13,7 @@ async function loadPending(){
   const msg = document.getElementById('pendingMsg');
   tbody.innerHTML = '';
   msg.textContent = '';
-  const r = await api('/api/admin/pending-list');
+  const r = await api('/api/admin?action=pending-list');
   if (!r.ok){ msg.textContent = '加载失败'; return; }
   const items = (r.body && r.body.items) || [];
   items.forEach(u => {
@@ -21,17 +21,17 @@ async function loadPending(){
     const td1 = document.createElement('td'); td1.textContent = u.username; tr.appendChild(td1);
     const td2 = document.createElement('td'); td2.textContent = new Date(u.created_at).toLocaleString(); tr.appendChild(td2);
     const td3 = document.createElement('td'); td3.className='actions';
-    const b1 = document.createElement('button'); b1.className='btn'; b1.textContent='通过'; b1.onclick=()=>act('/api/admin/approve',u.id);
-    const b2 = document.createElement('button'); b2.className='btn'; b2.textContent='加入黑名单'; b2.onclick=()=>act('/api/admin/blacklist',u.id);
-    const b3 = document.createElement('button'); b3.className='btn'; b3.textContent='拒绝/删除'; b3.onclick=()=>act('/api/admin/reject',u.id);
+    const b1 = document.createElement('button'); b1.className='btn'; b1.textContent='通过'; b1.onclick=()=>act('approve',u.id);
+    const b2 = document.createElement('button'); b2.className='btn'; b2.textContent='加入黑名单'; b2.onclick=()=>act('blacklist',u.id);
+    const b3 = document.createElement('button'); b3.className='btn'; b3.textContent='拒绝/删除'; b3.onclick=()=>act('reject',u.id);
     td3.appendChild(b1); td3.appendChild(b2); td3.appendChild(b3);
     tr.appendChild(td3);
     tbody.appendChild(tr);
   });
 }
 
-async function act(path, id){
-  const r = await api(path,'POST',{ id });
+async function act(action, id){
+  const r = await api('/api/admin','POST',{ action, id });
   await loadPending();
 }
 
@@ -40,7 +40,7 @@ async function recover(){
   const msg = document.getElementById('recoverMsg');
   msg.textContent = '';
   if (!id){ msg.textContent = '请输入用户ID'; return; }
-  const r = await api('/api/admin/recover','POST',{ id });
+  const r = await api('/api/admin','POST',{ action:'recover', id });
   msg.textContent = r.ok ? '已恢复为 member' : '恢复失败';
 }
 
@@ -49,4 +49,3 @@ function bind(){
 }
 
 document.addEventListener('DOMContentLoaded', function(){ bind(); loadPending(); });
-

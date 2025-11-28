@@ -169,7 +169,7 @@ async function loadCategories(){
     const row = document.createElement('div');
     row.style.display='flex'; row.style.justifyContent='space-between'; row.style.alignItems='center'; row.style.margin='6px 0';
     const name = document.createElement('span'); name.textContent = `${c.name} (${c.id})`;
-    const del = document.createElement('button'); del.className='btn'; del.textContent='删除'; del.onclick = async ()=>{ if (c.id==='qita'){ alert('“其他”不可删除'); return; } const rr = await api(`/api/categories/${encodeURIComponent(c.id)}`,'DELETE'); if (!rr.ok){ alert((rr.body&&rr.body.error)||'删除失败'); } await loadCategories(); await loadReports(); };
+    const del = document.createElement('button'); del.className='btn'; del.textContent='删除'; del.onclick = async ()=>{ if (c.id==='qita'){ alert('“其他”不可删除'); return; } const rr = await api(`/api/categories?id=${encodeURIComponent(c.id)}`,'DELETE'); if (!rr.ok){ alert((rr.body&&rr.body.error)||'删除失败'); } await loadCategories(); await loadReports(); };
     row.appendChild(name); row.appendChild(del);
     frag.appendChild(row);
   });
@@ -207,9 +207,9 @@ async function loadReports(){
     const head = document.createElement('div'); head.style.display='flex'; head.style.justifyContent='space-between';
     head.innerHTML = `<b>${it.project_name}</b><span style="color:#94a3b8">${new Date(it.updated_at).toLocaleString()}</span>`;
     const actions = document.createElement('div'); actions.className='actions';
-    const del = document.createElement('button'); del.className='btn'; del.textContent='删除'; del.onclick = async ()=>{ const rr = await api(`/api/reports/${encodeURIComponent(it.id)}`,'DELETE'); if (!rr.ok){ alert((rr.body&&rr.body.error)||'删除失败'); } await loadReports(); };
+    const del = document.createElement('button'); del.className='btn'; del.textContent='删除'; del.onclick = async ()=>{ const rr = await api(`/api/reports?id=${encodeURIComponent(it.id)}`,'DELETE'); if (!rr.ok){ alert((rr.body&&rr.body.error)||'删除失败'); } await loadReports(); };
     const edit = document.createElement('button'); edit.className='btn'; edit.textContent='编辑JSON'; edit.onclick = ()=> editReportJson(it);
-    const restore = document.createElement('button'); restore.className='btn'; restore.textContent='恢复上次编辑'; restore.onclick = async ()=>{ const rr = await api(`/api/reports/${encodeURIComponent(it.id)}/restore-last-edit`,'POST'); if (!rr.ok){ alert((rr.body&&rr.body.error)||'恢复失败'); } await loadReports(); };
+    const restore = document.createElement('button'); restore.className='btn'; restore.textContent='恢复上次编辑'; restore.onclick = async ()=>{ const rr = await api(`/api/reports?id=${encodeURIComponent(it.id)}&restore=1`,'POST'); if (!rr.ok){ alert((rr.body&&rr.body.error)||'恢复失败'); } await loadReports(); };
     actions.appendChild(edit); actions.appendChild(restore); actions.appendChild(del);
     const pre = document.createElement('pre'); pre.style.whiteSpace='pre-wrap'; pre.style.background='#0b1220'; pre.style.padding='10px'; pre.style.borderRadius='8px'; pre.textContent = toPreview(it);
     row.appendChild(head); row.appendChild(actions); row.appendChild(pre);
@@ -224,7 +224,7 @@ function editReportJson(it){
 }
 
 async function saveReportUpdate(id, obj){
-  const r = await api(`/api/reports/${encodeURIComponent(id)}`,'PUT', obj);
+  const r = await api(`/api/reports?id=${encodeURIComponent(id)}`,'PUT', obj);
   if (!r.ok){ alert((r.body&&r.body.error)||'更新失败'); return; }
   await loadReports();
 }
