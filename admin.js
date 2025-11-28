@@ -46,6 +46,24 @@ async function recover(){
 
 function bind(){
   document.getElementById('btnRecover').addEventListener('click', recover);
+  loadUsers();
 }
 
 document.addEventListener('DOMContentLoaded', function(){ bind(); loadPending(); });
+
+async function loadUsers(){
+  const tbody = document.getElementById('usersTbody');
+  const msg = document.getElementById('usersMsg');
+  if (!tbody) return;
+  tbody.innerHTML=''; msg.textContent='';
+  const r = await api('/api/admin?action=users');
+  if (!r.ok){ msg.textContent='加载失败'; return; }
+  const items = (r.body && r.body.items) || [];
+  items.forEach(u => {
+    const tr = document.createElement('tr');
+    const td1 = document.createElement('td'); td1.textContent = u.username; tr.appendChild(td1);
+    const td2 = document.createElement('td'); td2.textContent = u.status; tr.appendChild(td2);
+    const td3 = document.createElement('td'); td3.textContent = new Date(u.created_at).toLocaleString(); tr.appendChild(td3);
+    tbody.appendChild(tr);
+  });
+}

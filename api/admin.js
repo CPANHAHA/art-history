@@ -7,7 +7,13 @@ module.exports = async function(req, res){
   const { url } = getCfg();
   const h = headersJson();
   if (req.method === 'GET'){
-    const q = req.query || {}; if (q.action === 'pending-list'){ const r = await fetch(`${url}/rest/v1/users?status=eq.pending&select=id,username,created_at,status&order=created_at.asc`, { headers: { apikey:(process.env.SUPABASE_ANON_KEY||process.env.SUPABASE_SERVICE_ROLE_KEY), Authorization:`Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY||process.env.SUPABASE_ANON_KEY}` } }); if(!r.ok){ res.status(400).json({ error:'list failed' }); return; } const rows = await r.json(); res.setHeader('Cache-Control','no-store'); res.status(200).json({ items: rows||[] }); return; }
+    const q = req.query || {};
+    if (q.action === 'pending-list'){
+      const r = await fetch(`${url}/rest/v1/users?status=eq.pending&select=id,username,created_at,status&order=created_at.asc`, { headers: { apikey:(process.env.SUPABASE_ANON_KEY||process.env.SUPABASE_SERVICE_ROLE_KEY), Authorization:`Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY||process.env.SUPABASE_ANON_KEY}` } }); if(!r.ok){ res.status(400).json({ error:'list failed' }); return; } const rows = await r.json(); res.setHeader('Cache-Control','no-store'); res.status(200).json({ items: rows||[] }); return;
+    }
+    if (q.action === 'users'){
+      const r = await fetch(`${url}/rest/v1/users?select=id,username,created_at,status&order=created_at.desc`, { headers: { apikey:(process.env.SUPABASE_ANON_KEY||process.env.SUPABASE_SERVICE_ROLE_KEY), Authorization:`Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY||process.env.SUPABASE_ANON_KEY}` } }); if(!r.ok){ res.status(400).json({ error:'list failed' }); return; } const rows = await r.json(); res.setHeader('Cache-Control','no-store'); res.status(200).json({ items: rows||[] }); return;
+    }
     res.status(400).json({ error:'unknown action' }); return;
   }
   if (req.method === 'POST'){
@@ -27,4 +33,3 @@ module.exports = async function(req, res){
   }
   res.status(405).send('Method Not Allowed');
 }
-

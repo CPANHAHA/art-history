@@ -1401,14 +1401,13 @@
     });
   } 
   
-  function addNewCategory() {
+  async function addNewCategory() {
     const name = document.getElementById('newCategoryName').value.trim();
     if (!name) return alert('请输入分类名称');
-    if (categories.find(c => c.name === name)) { return alert('分类已存在'); }
-    const id = name.replace(/\s+/g, '_').toUpperCase();
-    categories.push({ id, name });
-    saveCats();
+    const r = await api('/api/categories','POST',{ name });
+    if (!r.ok){ alert((r.body&&r.body.error)||'创建失败'); return; }
     document.getElementById('newCategoryName').value = '';
+    await loadData();
     renderCategoryList();
     renderTabs();
   } 
@@ -1423,19 +1422,15 @@
     }
   } 
   
-  function deleteCategory(index) {
+  async function deleteCategory(index) {
     const cat = categories[index];
+    if (!cat) return;
     if (!confirm(`确定删除分类 "${cat.name}" 吗？该分类下的所有项目将移至 "其他" 分类。`)) return;
-    
-    // 移动项目
-    reports.filter(r => r.category === cat.id).forEach(r => r.category = '其他');
-    saveData();
-    
-    // 删除分类
-    categories.splice(index, 1);
-    saveCats();
-    
-    // 刷新UI
+    const r = await api(`/api/categories?id=${encodeURIComponent(cat.id)}`,'DELETE');
+    if (!r.ok){ alert((r.body&&r.body.error)||'删除失败'); return; }
+    // 本地视图立即迁移以提升用户体验
+    reports.forEach(x=>{ if (x.category===cat.id) x.category='qita'; });
+    await loadData();
     currentCatFilter = 'ALL';
     renderCategoryList();
     renderTabs();
@@ -1991,7 +1986,8 @@ Ticker/代币符号: ${ticker}`;
   async function addNewCategory(){ const name = document.getElementById('newCategoryName').value.trim(); if (!name) { alert('请输入分类名称'); return; } const r = await api('/api/categories','POST',{ name }); if (!r.ok){ alert((r.body&&r.body.error)||'创建失败'); return; } document.getElementById('newCategoryName').value=''; await loadData(); renderCategoryList(); renderTabs(); }
   async function deleteCategory(index){ const cat = categories[index]; if (!cat) return; if (cat.id==='qita'){ alert('“其他”不可删除'); return; } if (!confirm(`确定删除分类 "${cat.name}" 吗？相关项目将移至 "其他" 分类。`)) return; const r = await api(`/api/categories?id=${encodeURIComponent(cat.id)}`,'DELETE'); if (!r.ok){ alert((r.body&&r.body.error)||'删除失败'); return; } await loadData(); currentCatFilter='ALL'; renderCategoryList(); renderTabs(); renderList(); }
   async function confirmImport(){ if (!pendingImportData) return; const catSelect = document.getElementById('catSelect'); let categoryId = catSelect.value; let categoryName = catSelect.options[catSelect.selectedIndex].text; if (categoryId==='__NEW__'){ categoryName = document.getElementById('newCatInput').value.trim(); if (!categoryName){ alert('请输入新分类名称'); return; } const cr = await api('/api/categories','POST',{ name: categoryName }); if (!cr.ok){ alert((cr.body&&cr.body.error)||'分类创建失败'); return; } categoryId = (cr.body && cr.body.id) || categoryName.toLowerCase().replace(/\s+/g,'_'); }
-    const payload = { project_name: pendingImportData.project_name, category: categoryId, content: pendingImportData };
+    const norm = normalizeContent(pendingImportData);
+    const payload = { project_name: norm.project_name || pendingImportData.project_name, category: categoryId, content: norm, ticker: norm.ticker, launchpad: norm.launchpad };
     const pr = await api('/api/reports','POST', payload); if (!pr.ok){ alert((pr.body&&pr.body.error)||'保存失败'); return; }
     await loadData(); currentReportId = pr.body && pr.body.id; currentCatFilter = categoryId; renderTabs(); renderList(); renderDetail(); pendingImportData=null; document.getElementById('importText').value=''; closeModal('modalCategory'); closeModal('modalImport'); }
   async function saveEdit(){ const report = getReport(currentReportId); const oldC = getContent(report); const newC = JSON.parse(JSON.stringify(oldC)); newC.project_name = document.getElementById('e_pname').value.trim(); newC.ticker = document.getElementById('e_ticker').value.trim(); newC.tagline = document.getElementById('e_tag').value.trim(); newC.project_website = document.getElementById('e_web').value.trim(); newC.project_twitter = document.getElementById('e_tw').value.trim(); newC.launchpad = document.getElementById('e_launch').value.trim(); newC.ai_score = newC.ai_score || {}; newC.ai_score.overall = parseFloat(document.getElementById('e_s_all').value)||0; newC.ai_score.base_info_reliability = parseFloat(document.getElementById('e_s_base').value)||0; newC.ai_score.narrative_fit = parseFloat(document.getElementById('e_s_narr').value)||0; newC.ai_score.product_and_tech = parseFloat(document.getElementById('e_s_prod').value)||0; newC.ai_score.team_strength = parseFloat(document.getElementById('e_s_team').value)||0; newC.ai_score.market_potential = parseFloat(document.getElementById('e_s_mkt').value)||0; newC.ai_score.score_explanation = document.getElementById('e_s_exp').value.trim(); newC.basic_info = newC.basic_info || {}; newC.basic_info.summary = document.getElementById('e_info_sum').value.trim(); const coreFeaturesStr = document.getElementById('e_info_feat').value.trim(); newC.basic_info.core_features = coreFeaturesStr ? coreFeaturesStr.split(',').map(s=>s.trim()).filter(s=>s) : []; const focusStr = document.getElementById('e_focus').value.trim(); newC.focus_points = focusStr ? focusStr.split('\n').map(s=>s.trim()).filter(s=>s) : []; newC.team = newC.team || {}; newC.team.description = document.getElementById('e_team_desc').value.trim(); newC.tokenomics = newC.tokenomics || {}; newC.tokenomics.description = document.getElementById('e_token_desc').value.trim(); newC.business_potential = newC.business_potential || {}; newC.business_potential.analysis = document.getElementById('e_biz_an').value.trim(); const r = await api(`/api/reports?id=${encodeURIComponent(currentReportId)}`,'PUT',{ content: newC }); if (!r.ok){ alert((r.body&&r.body.error)||'更新失败'); return; } isEditing=false; await loadData(); renderTabs(); renderList(); renderDetail(); }
@@ -1999,7 +1995,50 @@ Ticker/代币符号: ${ticker}`;
   async function openHistory(){ const r = await api(`/api/reports?id=${encodeURIComponent(currentReportId)}&last_edit=1`); const item = (r.ok && r.body) ? r.body : null; const list = document.getElementById('historyList'); if (!item){ list.innerHTML = '<div class="list-item" style="justify-content:center">暂无历史快照</div>'; } else { const ts = item.edited_at ? item.edited_at.slice(0,16).replace('T',' ') : ''; list.innerHTML = `<div class="list-item" style="justify-content:space-between; margin-bottom:8px"><div><div style="font-weight:500;">最近快照</div><div style="font-size:12px; color:var(--text-dim); margin-top:4px;">${ts}</div></div><div style="text-align:right;"><button class="btn" onclick="restoreVersion(0)">恢复</button></div></div>`; } openModal('modalHistory'); }
   async function restoreVersion(ver){ const r = await api(`/api/reports?id=${encodeURIComponent(currentReportId)}&restore=1`,'POST'); if (!r.ok){ alert((r.body&&r.body.error)||'恢复失败'); return; } closeModal('modalHistory'); await loadData(); renderDetail(); renderList(); }
   const _init = init; init = async function(){ await loadData(); if (reports.length>0){ currentReportId = reports.find(r=>!r.is_deleted)?.id || null; } renderTabs(); renderList(); renderDetail(); };
+
+  function normalizeContent(src){
+    const out = JSON.parse(JSON.stringify(src||{}));
+    // 根级字段
+    out.project_name = out.project_name || out.projectName || '';
+    out.ticker = out.ticker || '';
+    out.launchpad = out.launchpad || out.launchpad_platform || '';
+    // basic_info
+    if (typeof out.basic_info === 'string'){
+      out.basic_info = { summary: out.basic_info, core_features: [] };
+    } else {
+      out.basic_info = out.basic_info || { summary:'', core_features: [] };
+      out.basic_info.summary = out.basic_info.summary || '';
+      out.basic_info.core_features = Array.isArray(out.basic_info.core_features)? out.basic_info.core_features : [];
+    }
+    // team
+    if (!out.team || typeof out.team !== 'object') out.team = { description:'' };
+    out.team.description = out.team.description || '';
+    // tokenomics
+    if (!out.tokenomics || typeof out.tokenomics !== 'object') out.tokenomics = { description:'' };
+    out.tokenomics.description = out.tokenomics.description || '';
+    // business_potential
+    if (!out.business_potential || typeof out.business_potential !== 'object') out.business_potential = { analysis:'' };
+    out.business_potential.analysis = out.business_potential.analysis || '';
+    // competitors
+    if (!out.competitors || typeof out.competitors !== 'object') out.competitors = { summary:'', main_competitors: [] };
+    out.competitors.summary = out.competitors.summary || '';
+    out.competitors.main_competitors = Array.isArray(out.competitors.main_competitors)? out.competitors.main_competitors : [];
+    // focus_points
+    out.focus_points = Array.isArray(out.focus_points)? out.focus_points : [];
+    // ai_score
+    const s = out.ai_score || {}; out.ai_score = {
+      overall: parseFloat(s.overall)||0,
+      base_info_reliability: parseFloat(s.base_info_reliability)||0,
+      narrative_fit: parseFloat(s.narrative_fit)||0,
+      product_and_tech: parseFloat(s.product_and_tech)||0,
+      team_strength: parseFloat(s.team_strength)||0,
+      market_potential: parseFloat(s.market_potential)||0,
+      score_explanation: s.score_explanation || ''
+    };
+    // meta
+    out.meta = out.meta || { generated_at: new Date().toISOString(), source_url:'', notes:'' };
+    return out;
+  }
 </script>
 </body>
 </html>
-
