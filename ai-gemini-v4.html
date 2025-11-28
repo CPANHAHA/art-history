@@ -2044,6 +2044,14 @@ Ticker/代币符号: ${ticker}`;
     out.meta = out.meta || { generated_at: new Date().toISOString(), source_url:'', notes:'' };
     return out;
   }
+
+  async function ensureCategoryByName(name){ const list = await api('/api/categories'); const items = (list.ok && list.body && list.body.items) ? list.body.items : []; const hit = items.find(c => String(c.name) === String(name)); if (hit) return hit.id; const cr = await api('/api/categories','POST',{ name }); if (cr.ok && cr.body && cr.body.id) return cr.body.id; return (name||'').toLowerCase().replace(/\s+/g,'_') || 'qita'; }
+  async function migrateFromLocal(){ try{ const flag = localStorage.getItem('local_migrated_v1'); if (flag==='1') return; const rs = localStorage.getItem(KEY_REPORTS); const cs = localStorage.getItem(KEY_CATS); if (!rs && !cs){ localStorage.setItem('local_migrated_v1','1'); return; } let catList = []; if (cs){ try{ const parsedC = JSON.parse(cs); catList = Array.isArray(parsedC) ? parsedC : (parsedC.categories||[]); }catch(e){} } const nameMap = {}; for (const c of catList){ const nm = c && c.name ? c.name : (c.id||''); if (!nm) continue; nameMap[nm] = await ensureCategoryByName(nm); }
+    const reportsRaw = rs ? JSON.parse(rs) : []; for (const r of Array.isArray(reportsRaw)?reportsRaw:[]){ if (r && r.is_deleted) continue; const c = (r && r.versions && r.versions[0] && r.versions[0].content) ? r.versions[0].content : null; if (!c) continue; const norm = normalizeContent(c); let catId = r.category || 'qita'; if (catId === '其他') catId = 'qita'; if (!/^[a-z0-9_]+$/.test(catId)) { const nm = catList.find(x=>x.id===r.category||x.name===r.category)?.name || r.category; catId = nameMap[nm] || (String(nm||'qita').toLowerCase().replace(/\s+/g,'_')); }
+      await api('/api/reports','POST',{ project_name: norm.project_name || r.project_name || '迁移报告', category: catId, content: norm, ticker: norm.ticker, launchpad: norm.launchpad }); }
+    localStorage.setItem('local_migrated_v1','1'); localStorage.removeItem(KEY_REPORTS); localStorage.removeItem(KEY_CATS);
+  }catch(e){ localStorage.setItem('local_migrated_v1','1'); }
+  const __orig_init = init; init = async function(){ await migrateFromLocal(); await loadData(); if (reports.length>0){ currentReportId = reports.find(r=>!r.is_deleted)?.id || null; } renderTabs(); renderList(); renderDetail(); };
 </script>
 </body>
 </html>
