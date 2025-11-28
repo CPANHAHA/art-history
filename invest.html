@@ -51,6 +51,12 @@
   </div>
   <main class="container">
     <section class="card">
+      <div class="section-title">分类管理</div>
+      <div class="actions"><input id="newCategoryName" class="btn" placeholder="新分类名称"><button class="btn" id="btnAddCategory">新增分类</button></div>
+      <div id="categoryMsg" style="color:var(--text-muted);font-size:.9rem"></div>
+      <div id="categoryList" class="preview"></div>
+    </section>
+    <section class="card">
       <div class="section-title">AI分析（外部生成）</div>
       <div class="grid">
         <div class="field"><label for="projectName">项目名称（必填）</label><input id="projectName" placeholder="例如：AURA Protocol"></div>
@@ -67,11 +73,21 @@
       <div id="importError" class="error"></div>
       <div id="importPreview" class="preview" style="display:none"></div>
     </section>
+    <section class="card">
+      <div class="section-title">报告列表</div>
+      <div class="actions">
+        <select id="filterCategory" class="btn"></select>
+        <input id="filterSearch" class="btn" placeholder="搜索项目名">
+        <select id="filterSort" class="btn"><option value="recent">按最近更新</option><option value="rating">按评分</option></select>
+        <button class="btn" id="btnReloadReports">刷新</button>
+      </div>
+      <div id="reportsList" class="preview"></div>
+    </section>
   </main>
   <script>
     (async function(){
       try{ const r = await fetch('/api/session'); const d = await r.json(); const ok = d && d.loggedIn && d.user && (d.user.status==='member' || d.user.status==='admin'); if (!ok){ alert('仅会员或管理员可访问 AI 投研助手'); location.href='/'; return; }
-        const nav=document.getElementById('navActions'); const admin = (d.user.status==='admin') ? '<a href="/admin" class="btn">管理后台</a>' : ''; nav.innerHTML = admin + '<button class="btn" onclick="logout()">退出</button>'; }
+        const nav=document.getElementById('navActions'); const admin = (d.user.status==='admin') ? '<a href="/admin" class="btn">管理后台</a>' : ''; nav.innerHTML = '<a href="/" class="btn">返回首页</a>' + admin + '<button class="btn" onclick="logout()">退出</button>'; }
       catch(e){ location.href='/'; }
     })();
     function logout(){ fetch('/api/logout',{method:'POST'}).then(()=>{ location.href='/'; }); }
