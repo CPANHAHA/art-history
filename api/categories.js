@@ -12,6 +12,11 @@ module.exports = async function(req, res){
   if (req.method === 'POST'){
     const body = req.body || {}; const name = String(body.name||'').trim(); if (!name){ res.status(400).json({ error:'name required' }); return; }
     const cid = name.toLowerCase().replace(/\s+/g,'_'); const h = headersJson();
+    // duplicate check by id or name
+    const ex1 = await fetch(`${url}/rest/v1/categories?id=eq.${encodeURIComponent(cid)}&select=id`, { headers: h });
+    if (ex1.ok){ const rows = await ex1.json(); if (Array.isArray(rows)&&rows[0]){ res.status(409).json({ error:'category exists' }); return; } }
+    const ex2 = await fetch(`${url}/rest/v1/categories?name=eq.${encodeURIComponent(name)}&select=id`, { headers: h });
+    if (ex2.ok){ const rows = await ex2.json(); if (Array.isArray(rows)&&rows[0]){ res.status(409).json({ error:'category exists' }); return; } }
     const ins = await fetch(`${url}/rest/v1/categories`, { method:'POST', headers:h, body: JSON.stringify({ id: cid, name }) });
     if (!ins.ok){ res.status(400).json({ error:'create failed' }); return; }
     const out = await ins.json(); res.setHeader('Cache-Control','no-store'); res.status(201).json(out[0]); return;
@@ -26,4 +31,3 @@ module.exports = async function(req, res){
   }
   res.status(405).send('Method Not Allowed');
 }
-
