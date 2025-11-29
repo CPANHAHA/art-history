@@ -1386,22 +1386,42 @@
   function renderCategoryList() {
     const container = document.getElementById('categoryList');
     container.innerHTML = '';
-    categories.forEach((cat, index) => {
-      if (cat.id === '其他') return; // 不能删除"其他"分类
+    const sorted = [...categories].sort((a,b)=>{
+      if (a.id==='qita' && b.id!=='qita') return 1;
+      if (b.id==='qita' && a.id!=='qita') return -1;
+      return String(a.name).localeCompare(String(b.name));
+    });
+    sorted.forEach((cat) => {
       const projectCount = reports.filter(r => r.category === cat.id && !r.is_deleted).length;
       const div = document.createElement('div');
       div.className = 'list-item';
       div.style.marginBottom = '8px';
-      div.innerHTML = `
-        <div style="flex: 1;">
-          <div style="font-weight: 500;">${cat.name}</div>
-          <div style="font-size: 11px; color: var(--text-dim); margin-top: 4px;"> 项目数: ${projectCount} </div>
-        </div>
-        <div style="display: flex; gap: 4px;">
-          <button class="btn-icon-only edit-inline" onclick="editCategory(${index})" title="编辑" style="font-size: 12px;">✏️</button>
-          <button class="btn-icon-only edit-inline" onclick="deleteCategory(${index})" title="删除" style="font-size: 12px; color: var(--color-bad);">🗑</button>
-        </div>
-      `;
+      const actionZone = document.createElement('div');
+      actionZone.style.display = 'flex';
+      actionZone.style.gap = '4px';
+      const left = document.createElement('div');
+      left.style.flex = '1';
+      left.innerHTML = `<div style="font-weight:500;">${cat.name}</div>
+        <div style="font-size:11px;color:var(--text-dim);margin-top:4px;">项目数: ${projectCount}</div>`;
+      const editBtn = document.createElement('button');
+      editBtn.className = 'btn-icon-only edit-inline';
+      editBtn.title = '编辑';
+      editBtn.style.fontSize = '12px';
+      editBtn.textContent = '✏️';
+      editBtn.onclick = () => editCategory(categories.findIndex(c=>c.id===cat.id));
+      actionZone.appendChild(editBtn);
+      if (cat.id !== 'qita' && cat.id !== 'ALL'){
+        const delBtn = document.createElement('button');
+        delBtn.className = 'btn-icon-only edit-inline';
+        delBtn.title = '删除';
+        delBtn.style.fontSize = '12px';
+        delBtn.style.color = 'var(--color-bad)';
+        delBtn.textContent = '🗑';
+        delBtn.onclick = () => deleteCategory(categories.findIndex(c=>c.id===cat.id));
+        actionZone.appendChild(delBtn);
+      }
+      div.appendChild(left);
+      div.appendChild(actionZone);
       container.appendChild(div);
     });
   } 
