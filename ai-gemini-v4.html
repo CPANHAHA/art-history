@@ -4,6 +4,16 @@
   <meta charset="UTF-8" />
   <title>AI 投研助手 V3 (新评分模型)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script>
+    window.api = window.api || (async function(path, method, data){
+      const opts = { method: method||'GET', headers:{ 'Content-Type':'application/json' } };
+      if (data) opts.body = JSON.stringify(data);
+      const resp = await fetch(path, opts);
+      const ct = resp.headers.get('Content-Type')||'';
+      const body = ct.includes('application/json')? await resp.json() : await resp.text();
+      return { ok: resp.ok, body };
+    });
+  </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
