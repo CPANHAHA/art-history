@@ -38,6 +38,85 @@
 
   window.deleteCategory = window.handleDelete;
 
+  async function refreshCategories(){
+    try{
+      const r = await window.api('/api/categories');
+      const items = (r.ok && r.body && r.body.items) ? r.body.items : [];
+      window.categories = items.map(c => ({ id:c.id, name:c.name }));
+      if (typeof window.renderCategoryList === 'function') window.renderCategoryList();
+      if (typeof window.renderTabs === 'function') window.renderTabs();
+    }catch(e){ console.error('refreshCategories error', e); }
+  }
+
+  async function refreshReports(){
+    try{
+      const r = await window.api('/api/reports?page=1&page_size=200&sort=recent');
+      const items = (r.ok && r.body && r.body.items) ? r.body.items : [];
+      window.reports = items.map(it => ({
+        id: it.id,
+        category: it.category,
+        created_at: it.created_at,
+        last_updated_at: it.updated_at,
+        is_deleted: !!it.deleted_at,
+        current_version: 1,
+        versions: [{ version:1, created_at: it.created_at, source:'backend', content: (it.content || {}) }]
+      }));
+      if (typeof window.renderList === 'function') window.renderList();
+      if (typeof window.renderDetail === 'function') window.renderDetail();
+    }catch(e){ console.error('refreshReports error', e); }
+  }
+
+  async function bootstrap(){
+    await refreshCategories();
+    await refreshReports();
+  }
+
+  document.addEventListener('DOMContentLoaded', bootstrap);
+
+  function normalize(src){
+    const o = JSON.parse(JSON.stringify(src||{}));
+    o.project_name = o.project_name || '';
+    o.ticker = o.ticker || '';
+    if (typeof o.basic_info === 'string') o.basic_info = { summary:o.basic_info, core_features:[] };
+    else o.basic_info = o.basic_info || { summary:'', core_features:[] };
+    o.team = o.team || { description:'' };
+    o.tokenomics = o.tokenomics || { description:'' };
+    o.business_potential = o.business_potential || { analysis:'' };
+    o.competitors = o.competitors || { summary:'', main_competitors:[] };
+    o.focus_points = Array.isArray(o.focus_points) ? o.focus_points : [];
+    o.ai_score = o.ai_score || {};
+    o.meta = o.meta || { generated_at: new Date().toISOString(), source_url:'', notes:'' };
+    return o;
+  }
+
+  window.confirmImport = async function(){
+    try{
+      if (!window.pendingImportData) return;
+      const sel = document.getElementById('catSelect');
+      let cid = sel && sel.value ? sel.value : 'qita';
+      let cname = sel && sel.options && sel.selectedIndex>=0 ? sel.options[sel.selectedIndex].text : '';
+      if (cid === '__NEW__'){
+        cname = (document.getElementById('newCatInput')?.value||'').trim();
+        if (!cname){ alert('请输入新分类名称'); return; }
+        const cr = await window.api('/api/categories','POST',{ name: cname });
+        if (!cr.ok){ alert((cr.body&&cr.body.error)||'创建失败'); return; }
+        cid = (cr.body && cr.body.id) || cname.toLowerCase().replace(/\s+/g,'_');
+      }
+      const norm = normalize(window.pendingImportData);
+      const pr = await window.api('/api/reports','POST',{ project_name: norm.project_name || window.pendingImportData.project_name, category: cid, content: norm, ticker: norm.ticker });
+      if (!pr.ok){ alert((pr.body&&pr.body.error)||'保存失败'); return; }
+      await refreshCategories();
+      await refreshReports();
+      window.pendingImportData = null;
+      const it = document.getElementById('importText'); if (it) it.value='';
+      const mc = document.getElementById('modalCategory'); if (mc) mc.style.display='none';
+      const mi = document.getElementById('modalImport'); if (mi) mi.style.display='none';
+    }catch(e){ console.error('confirmImport error', e); }
+  };
+
+  window.refreshCategories = refreshCategories;
+  window.refreshReports = refreshReports;
+
   window.updatePrompt = function(){
     try {
       const name = (document.getElementById('pName')?.value||'').trim();

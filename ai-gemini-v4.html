@@ -779,7 +779,7 @@
   </div>
 </div>
 
-<script>
+<!--
   // ============================================
   // 1. 数据逻辑 (LocalStorage Logic)
   // ============================================
@@ -1925,8 +1925,8 @@ Ticker/代币符号: ${ticker}`;
     
   // 页面加载完成后启动
   window.onload = init;
-</script>
-<script>
+-->
+<!--
   async function api(path, method, data){ const opts = { method: method||'GET', headers:{ 'Content-Type':'application/json' } }; if (data) opts.body = JSON.stringify(data); const resp = await fetch(path, opts); const ct = resp.headers.get('Content-Type')||''; const body = ct.includes('application/json')? await resp.json() : await resp.text(); return { ok: resp.ok, body }; }
   async function loadData(){ const cats = await api('/api/categories'); categories = (cats.ok && cats.body && cats.body.items) ? cats.body.items.map(c=>({ id:c.id, name:c.name })) : []; const r = await api('/api/reports?page=1&page_size=200&sort=recent'); const items = (r.ok && r.body && r.body.items) ? r.body.items : []; reports = items.map(it=>({ id: it.id, category: it.category, created_at: it.created_at, last_updated_at: it.updated_at, is_deleted: !!it.deleted_at, current_version: 1, versions: [{ version:1, created_at: it.created_at, source:'backend', content: (it.content || { project_name: it.project_name||'', ticker: it.ticker||'', launchpad: it.launchpad||'', basic_info: it.basic_info? { summary: it.basic_info } : {}, ai_score: {} }) }] })); }
   function saveData(){ }
@@ -2037,6 +2037,6 @@ Ticker/代币符号: ${ticker}`;
     localStorage.setItem('local_migrated_v1','1'); localStorage.removeItem(KEY_REPORTS); localStorage.removeItem(KEY_CATS);
   }catch(e){ localStorage.setItem('local_migrated_v1','1'); }
   const __orig_init = init; init = async function(){ await migrateFromLocal(); await loadData(); if (reports.length>0){ currentReportId = reports.find(r=>!r.is_deleted)?.id || null; } renderTabs(); renderList(); renderDetail(); };
-</script>
+-->
 </body>
 </html>
