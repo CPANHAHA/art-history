@@ -575,6 +575,7 @@
     ::-webkit-scrollbar-thumb:hover { background: #475569; }
   </style>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤖</text></svg>">
+  <script defer src="/ai.js"></script>
 </head>
 <body>
 
@@ -796,32 +797,11 @@
   let isEditing = false;
 
   function loadData() {
-    try {
-      const r = localStorage.getItem(KEY_REPORTS);
-      reports = r ? JSON.parse(r) : [];
-      const c = localStorage.getItem(KEY_CATS);
-      if (c) {
-        // 修复：原版代码可能没有在localStorage中保存 categories 数组本身
-        const parsedC = JSON.parse(c);
-        categories = parsedC.categories || parsedC; 
-      } else {
-        categories = [
-          { id: 'ICM', name: 'ICM' }, 
-          { id: 'AI', name: 'AI' }, 
-          { id: 'DeFi', name: 'DeFi' },
-          { id: '其他', name: '其他' }
-        ];
-      }
-    } catch(e) { console.error(e); }
+    // 旧版本地回退已移除；分类与报告统一由 API 加载
+    // 实际加载逻辑在底部统一的 API 版 loadData 中实现
   }
   
-  function saveData() {
-    localStorage.setItem(KEY_REPORTS, JSON.stringify(reports));
-  }
-  function saveCats() {
-    // 确保以 { categories: [] } 结构保存，方便将来扩展
-    localStorage.setItem(KEY_CATS, JSON.stringify({ categories }));
-  }
+  // 本地存储相关逻辑已废弃，统一改为后端持久化
 
   function getReport(id) { return reports.find(r => r.id === id); }
   function getContent(report) { 
@@ -1573,92 +1553,27 @@ Ticker/代币符号: ${ticker}`;
     document.getElementById('pOutput').value = prompt;
   }
 
-  // 解析导入的 JSON 报告
+  // 解析导入的 JSON 报告（仅负责解析与弹窗展示，保存由 API 版 confirmImport 处理）
   function parseImport() {
     const text = document.getElementById('importText').value.trim();
     document.getElementById('importMsg').textContent = '';
     pendingImportData = null;
-
     try {
       const data = JSON.parse(text);
-      if (!data.project_name || !data.ticker) {
-        throw new Error('JSON缺少 project_name 或 ticker 字段。');
-      }
+      if (!data.project_name || !data.ticker) throw new Error('JSON缺少 project_name 或 ticker 字段。');
       pendingImportData = data;
-      
-      // 渲染分类选择
       const catSelect = document.getElementById('catSelect');
-      catSelect.innerHTML = categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('') + 
-                            '<option value="__NEW__">--- 创建新分类 ---</option>';
-      
-      // 设置新分类输入框初始状态
+      catSelect.innerHTML = categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('') + '<option value="__NEW__">--- 创建新分类 ---</option>';
       document.getElementById('newCatGroup').style.display = 'none';
-
       closeModal('modalImport');
       openModal('modalCategory');
-
     } catch (e) {
       document.getElementById('importMsg').textContent = 'JSON解析错误或格式不符合要求：' + e.message;
       document.getElementById('importMsg').style.color = 'var(--color-bad)';
     }
   }
 
-  // 确认保存导入的报告
-  function confirmImport() {
-    if (!pendingImportData) return;
-    
-    const catSelect = document.getElementById('catSelect');
-    let categoryId = catSelect.value;
-    let categoryName = catSelect.options[catSelect.selectedIndex].text;
-
-    if (categoryId === '__NEW__') {
-      categoryName = document.getElementById('newCatInput').value.trim();
-      if (!categoryName) {
-        alert('请输入新分类名称');
-        return;
-      }
-      categoryId = categoryName.replace(/\s+/g, '_').toUpperCase();
-      if (categories.find(c => c.id === categoryId)) {
-          alert('分类已存在');
-          return;
-      }
-      categories.push({ id: categoryId, name: categoryName });
-      saveCats();
-    }
-
-    // 构建新报告对象
-    const now = new Date().toISOString();
-    const newReport = {
-      id: genId(),
-      category: categoryId,
-      created_at: now,
-      last_updated_at: now,
-      is_deleted: false,
-      current_version: 1,
-      versions: [{
-        version: 1,
-        created_at: now,
-        source: 'manual_import',
-        content: pendingImportData
-      }]
-    };
-
-    reports.unshift(newReport); // 添加到列表顶部
-    saveData();
-    
-    // 刷新UI
-    currentReportId = newReport.id;
-    currentCatFilter = categoryId; // 切换到新导入的分类
-    renderTabs();
-    renderList();
-    renderDetail();
-    
-    // 清理
-    pendingImportData = null;
-    document.getElementById('importText').value = '';
-    closeModal('modalCategory');
-    closeModal('modalImport');
-  }
+  // 旧版 confirmImport 已移除；使用底部 API 版 confirmImport
 
   function handleFileSelect(event) {
     const file = event.target.files[0];
