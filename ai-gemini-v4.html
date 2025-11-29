@@ -2000,7 +2000,6 @@ Ticker/代币符号: ${ticker}`;
   // 页面加载完成后启动
   window.onload = init;
 </script>
-</script>
 <script>
   async function api(path, method, data){ const opts = { method: method||'GET', headers:{ 'Content-Type':'application/json' } }; if (data) opts.body = JSON.stringify(data); const resp = await fetch(path, opts); const ct = resp.headers.get('Content-Type')||''; const body = ct.includes('application/json')? await resp.json() : await resp.text(); return { ok: resp.ok, body }; }
   async function loadData(){ const cats = await api('/api/categories'); categories = (cats.ok && cats.body && cats.body.items) ? cats.body.items.map(c=>({ id:c.id, name:c.name })) : []; const r = await api('/api/reports?page=1&page_size=200&sort=recent'); const items = (r.ok && r.body && r.body.items) ? r.body.items : []; reports = items.map(it=>({ id: it.id, category: it.category, created_at: it.created_at, last_updated_at: it.updated_at, is_deleted: !!it.deleted_at, current_version: 1, versions: [{ version:1, created_at: it.created_at, source:'backend', content: (it.content || { project_name: it.project_name||'', ticker: it.ticker||'', launchpad: it.launchpad||'', basic_info: it.basic_info? { summary: it.basic_info } : {}, ai_score: {} }) }] })); }
@@ -2019,7 +2018,7 @@ Ticker/代币符号: ${ticker}`;
   async function deleteReport(){ if (!confirm('确定删除此报告吗？')) return; const r = await api(`/api/reports?id=${encodeURIComponent(currentReportId)}`,'DELETE'); if (!r.ok){ alert((r.body&&r.body.error)||'删除失败'); return; } currentReportId=null; await loadData(); renderTabs(); renderList(); renderDetail(); }
   async function openHistory(){ const r = await api(`/api/reports?id=${encodeURIComponent(currentReportId)}&last_edit=1`); const item = (r.ok && r.body) ? r.body : null; const list = document.getElementById('historyList'); if (!item){ list.innerHTML = '<div class="list-item" style="justify-content:center">暂无历史快照</div>'; } else { const ts = item.edited_at ? item.edited_at.slice(0,16).replace('T',' ') : ''; list.innerHTML = `<div class="list-item" style="justify-content:space-between; margin-bottom:8px"><div><div style="font-weight:500;">最近快照</div><div style="font-size:12px; color:var(--text-dim); margin-top:4px;">${ts}</div></div><div style="text-align:right;"><button class="btn" onclick="restoreVersion(0)">恢复</button></div></div>`; } openModal('modalHistory'); }
   async function restoreVersion(ver){ const r = await api(`/api/reports?id=${encodeURIComponent(currentReportId)}&restore=1`,'POST'); if (!r.ok){ alert((r.body&&r.body.error)||'恢复失败'); return; } closeModal('modalHistory'); await loadData(); renderDetail(); renderList(); }
-  const _init = init; init = async function(){ await loadData(); if (reports.length>0){ currentReportId = reports.find(r=>!r.is_deleted)?.id || null; } renderTabs(); renderList(); renderDetail(); };
+  // 由迁移版 init 覆盖；保留此处逻辑在后续统一入口中执行
 
   function normalizeContent(src){
     const out = JSON.parse(JSON.stringify(src||{}));
