@@ -13,7 +13,11 @@
 
 ## 初始化 Supabase
 - 打开 Supabase 项目 → SQL Editor 执行 `supabase/init.sql`
-- 脚本包含：枚举 `user_status`、`users` 表、初始管理员注入（`chuye1987/19870110`）
+- 创建管理员账号（安全方式）：
+  1. 本地生成随机盐与密码哈希：`node scripts/gen_password_hash.js '<你的密码>'`
+  2. 在 Supabase SQL Editor 执行：
+     `INSERT INTO public.users (username, password_hash, password_salt, status) VALUES ('<你的用户名>', '<哈希HEX>', '<盐HEX>', 'admin');`
+  3. 立即删除或更新默认密码，并妥善保管，不要将明文口令写入仓库或注释
 
 ## 路由与接口
 - 页面：`/`、`/ai-invest`（跳转至 `invest.html`）、`/admin`
