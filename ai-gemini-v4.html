@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <script>
     window.api = window.api || (async function(path, method, data){
-      const opts = { method: method||'GET', headers:{ 'Content-Type':'application/json' } };
+      const opts = { method: method||'GET', headers:{ 'Content-Type':'application/json' }, credentials:'include' };
       if (data) opts.body = JSON.stringify(data);
       const resp = await fetch(path, opts);
       const ct = resp.headers.get('Content-Type')||'';
@@ -1428,7 +1428,7 @@
         delBtn.style.fontSize = '12px';
         delBtn.style.color = 'var(--color-bad)';
         delBtn.textContent = '🗑';
-        delBtn.onclick = () => deleteCategory(categories.findIndex(c=>c.id===cat.id));
+        delBtn.onclick = () => deleteCategory(cat.id);
         actionZone.appendChild(delBtn);
       }
       div.appendChild(left);
@@ -1458,8 +1458,8 @@
     }
   } 
   
-  async function deleteCategory(index) {
-    const cat = categories[index];
+  async function deleteCategory(id) {
+    const cat = categories.find(c=>c.id===id);
     if (!cat) return;
     if (!confirm(`确定删除分类 "${cat.name}" 吗？该分类下的所有项目将移至 "其他" 分类。`)) return;
     const r = await api(`/api/categories?id=${encodeURIComponent(cat.id)}`,'DELETE');

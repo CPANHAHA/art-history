@@ -1,5 +1,6 @@
 exports.config = { runtime: 'nodejs' };
 const { getCfg, headersJson } = require('../lib/supabase');
+const { requireRole } = require('../lib/guard');
 
 module.exports = async function(req, res){
   const { url } = getCfg();
@@ -24,12 +25,18 @@ module.exports = async function(req, res){
   }
   if (req.method === 'DELETE'){
     if (!process.env.SUPABASE_SERVICE_ROLE_KEY){ res.status(500).json({ error:'service role key missing' }); return; }
+    const sess = requireRole(req, res, ['admin']); if (!sess) return;
     const q = req.query || {}; const cid = q.id; if (!cid){ res.status(400).json({ error:'missing id' }); return; }
     if (cid==='qita'){ res.status(400).json({ error:'\'其他\'不可删除' }); return; }
     const h = headersJson();
+    // existence check
+    const exists = await fetch(`${url}/rest/v1/categories?id=eq.${encodeURIComponent(cid)}&select=id`, { headers: h });
+    if (!exists.ok){ res.status(500).json({ error:'existence check failed' }); return; }
+    const found = await exists.json();
+    if (!Array.isArray(found) || !found[0]){ res.status(404).json({ error:'Category not found' }); return; }
     const reassign = await fetch(`${url}/rest/v1/reports?category=eq.${encodeURIComponent(cid)}`, { method:'PATCH', headers:h, body: JSON.stringify({ category:'qita' }) }); if (!reassign.ok){ res.status(400).json({ error:'reassign failed' }); return; }
     const del = await fetch(`${url}/rest/v1/categories?id=eq.${encodeURIComponent(cid)}`, { method:'DELETE', headers:h }); if (!del.ok){ const txt = await del.text().catch(()=> ''); res.status(400).json({ error:'delete failed', status: del.status, detail: txt }); return; }
-    res.setHeader('Cache-Control','no-store'); res.status(200).json({ ok:true }); return;
+    res.setHeader('Cache-Control','no-store'); res.status(200).json({ success:true, message:'Category deleted successfully' }); return;
   }
   res.status(405).send('Method Not Allowed');
 }
