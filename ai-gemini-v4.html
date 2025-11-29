@@ -564,6 +564,7 @@
     ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
     ::-webkit-scrollbar-thumb:hover { background: #475569; }
   </style>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤖</text></svg>">
 </head>
 <body>
 
@@ -2014,7 +2015,47 @@ Ticker/代币符号: ${ticker}`;
     const payload = { project_name: norm.project_name || pendingImportData.project_name, category: categoryId, content: norm, ticker: norm.ticker, launchpad: norm.launchpad };
     const pr = await api('/api/reports','POST', payload); if (!pr.ok){ alert((pr.body&&pr.body.error)||'保存失败'); return; }
     await loadData(); currentReportId = pr.body && pr.body.id; currentCatFilter = categoryId; renderTabs(); renderList(); renderDetail(); pendingImportData=null; document.getElementById('importText').value=''; closeModal('modalCategory'); closeModal('modalImport'); }
-  async function saveEdit(){ const report = getReport(currentReportId); const oldC = getContent(report); const newC = JSON.parse(JSON.stringify(oldC)); newC.project_name = document.getElementById('e_pname').value.trim(); newC.ticker = document.getElementById('e_ticker').value.trim(); newC.tagline = document.getElementById('e_tag').value.trim(); newC.project_website = document.getElementById('e_web').value.trim(); newC.project_twitter = document.getElementById('e_tw').value.trim(); newC.launchpad = document.getElementById('e_launch').value.trim(); newC.ai_score = newC.ai_score || {}; newC.ai_score.overall = parseFloat(document.getElementById('e_s_all').value)||0; newC.ai_score.base_info_reliability = parseFloat(document.getElementById('e_s_base').value)||0; newC.ai_score.narrative_fit = parseFloat(document.getElementById('e_s_narr').value)||0; newC.ai_score.product_and_tech = parseFloat(document.getElementById('e_s_prod').value)||0; newC.ai_score.team_strength = parseFloat(document.getElementById('e_s_team').value)||0; newC.ai_score.market_potential = parseFloat(document.getElementById('e_s_mkt').value)||0; newC.ai_score.score_explanation = document.getElementById('e_s_exp').value.trim(); newC.basic_info = newC.basic_info || {}; newC.basic_info.summary = document.getElementById('e_info_sum').value.trim(); const coreFeaturesStr = document.getElementById('e_info_feat').value.trim(); newC.basic_info.core_features = coreFeaturesStr ? coreFeaturesStr.split(',').map(s=>s.trim()).filter(s=>s) : []; const focusStr = document.getElementById('e_focus').value.trim(); newC.focus_points = focusStr ? focusStr.split('\n').map(s=>s.trim()).filter(s=>s) : []; newC.team = newC.team || {}; newC.team.description = document.getElementById('e_team_desc').value.trim(); newC.tokenomics = newC.tokenomics || {}; newC.tokenomics.description = document.getElementById('e_token_desc').value.trim(); newC.business_potential = newC.business_potential || {}; newC.business_potential.analysis = document.getElementById('e_biz_an').value.trim(); const r = await api(`/api/reports?id=${encodeURIComponent(currentReportId)}`,'PUT',{ content: newC }); if (!r.ok){ alert((r.body&&r.body.error)||'更新失败'); return; } isEditing=false; await loadData(); renderTabs(); renderList(); renderDetail(); }
+  async function saveEdit(){
+    const report = getReport(currentReportId);
+    if (!report) return;
+    const oldC = getContent(report) || {};
+    const newC = JSON.parse(JSON.stringify(oldC));
+    const gv = (id) => { const el = document.getElementById(id); return el ? el.value.trim() : ''; };
+    const gp = (id) => { const el = document.getElementById(id); return el ? parseFloat(el.value)||0 : 0; };
+    newC.project_name = gv('e_pname');
+    newC.ticker = gv('e_ticker');
+    newC.tagline = gv('e_tag');
+    newC.project_website = gv('e_web');
+    newC.project_twitter = gv('e_tw');
+    newC.launchpad = gv('e_launch');
+    newC.ai_score = newC.ai_score || {};
+    newC.ai_score.overall = gp('e_s_all');
+    newC.ai_score.base_info_reliability = gp('e_s_base');
+    newC.ai_score.narrative_fit = gp('e_s_narr');
+    newC.ai_score.product_and_tech = gp('e_s_prod');
+    newC.ai_score.team_strength = gp('e_s_team');
+    newC.ai_score.market_potential = gp('e_s_mkt');
+    newC.ai_score.score_explanation = gv('e_s_exp');
+    newC.basic_info = newC.basic_info || {};
+    newC.basic_info.summary = gv('e_info_sum');
+    const coreFeaturesStr = gv('e_info_feat');
+    newC.basic_info.core_features = coreFeaturesStr ? coreFeaturesStr.split(',').map(s=>s.trim()).filter(Boolean) : [];
+    const focusStr = gv('e_focus');
+    newC.focus_points = focusStr ? focusStr.split('\n').map(s=>s.trim()).filter(Boolean) : [];
+    newC.team = newC.team || {};
+    newC.team.description = gv('e_team_desc');
+    newC.tokenomics = newC.tokenomics || {};
+    newC.tokenomics.description = gv('e_token_desc');
+    newC.business_potential = newC.business_potential || {};
+    newC.business_potential.analysis = gv('e_biz_an');
+    const r = await api(`/api/reports?id=${encodeURIComponent(currentReportId)}`,'PUT',{ content: newC });
+    if (!r.ok){ alert((r.body&&r.body.error)||'更新失败'); return; }
+    isEditing = false;
+    await loadData();
+    renderTabs();
+    renderList();
+    renderDetail();
+  }
   async function deleteReport(){ if (!confirm('确定删除此报告吗？')) return; const r = await api(`/api/reports?id=${encodeURIComponent(currentReportId)}`,'DELETE'); if (!r.ok){ alert((r.body&&r.body.error)||'删除失败'); return; } currentReportId=null; await loadData(); renderTabs(); renderList(); renderDetail(); }
   async function openHistory(){ const r = await api(`/api/reports?id=${encodeURIComponent(currentReportId)}&last_edit=1`); const item = (r.ok && r.body) ? r.body : null; const list = document.getElementById('historyList'); if (!item){ list.innerHTML = '<div class="list-item" style="justify-content:center">暂无历史快照</div>'; } else { const ts = item.edited_at ? item.edited_at.slice(0,16).replace('T',' ') : ''; list.innerHTML = `<div class="list-item" style="justify-content:space-between; margin-bottom:8px"><div><div style="font-weight:500;">最近快照</div><div style="font-size:12px; color:var(--text-dim); margin-top:4px;">${ts}</div></div><div style="text-align:right;"><button class="btn" onclick="restoreVersion(0)">恢复</button></div></div>`; } openModal('modalHistory'); }
   async function restoreVersion(ver){ const r = await api(`/api/reports?id=${encodeURIComponent(currentReportId)}&restore=1`,'POST'); if (!r.ok){ alert((r.body&&r.body.error)||'恢复失败'); return; } closeModal('modalHistory'); await loadData(); renderDetail(); renderList(); }
