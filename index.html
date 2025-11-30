@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="/styles.css">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚓</text></svg>">
+  <script src="modal.js"></script>
   <script>
     (function(){
       try{
@@ -45,88 +46,6 @@
     .message-error{background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:#f87171}
     .message-warning{background:rgba(234,179,8,.15);border:1px solid rgba(234,179,8,.3);color:#facc15}
     @media (max-width:768px){.hero h1{font-size:2rem}.hero p{font-size:1rem}.tools-grid{grid-template-columns:1fr}.nav-content{flex-direction:column;gap:1rem}.nav-actions{flex-wrap:wrap;justify-content:center}}
-  </style>
-  <style> 
-    /* 1. 弹窗大盒子：垂直排列，高度自适应 - 融入艺术风格 */ 
-    #customModal .modal-box { 
-        display: flex !important; 
-        flex-direction: column !important; 
-        justify-content: flex-start !important; 
-        align-items: stretch !important; 
-        
-        width: 90% !important; 
-        max-width: 400px !important; 
-        height: auto !important; 
-        padding: 30px !important; 
-        
-        /* Art Style Integration */
-        background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%) !important; 
-        border: 1px solid #404040 !important; 
-        border-radius: 12px !important; 
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
-        color: #f0f0f0 !important;
-    } 
-
-    /* 2. 内容区域 */ 
-    #customModal .modal-content { 
-        display: block !important; 
-        width: 100% !important; 
-        margin-bottom: 25px !important; 
-        background: transparent !important; 
-        padding: 0 !important; 
-    } 
-
-    /* 3. 表单容器 */ 
-    .login-form-container { 
-        display: flex !important; 
-        flex-direction: column !important; 
-        gap: 20px !important; 
-        width: 100% !important; 
-    } 
-
-    /* 4. 输入框 - 艺术风格 */ 
-    .modal-input { 
-        display: block !important; 
-        width: 100% !important; 
-        height: 44px !important; 
-        box-sizing: border-box !important; 
-        
-        /* Art Style Input */
-        background: rgba(255, 255, 255, 0.1) !important; 
-        border: 1px solid #555 !important; 
-        border-radius: 6px !important; 
-        color: white !important; 
-        padding: 0 12px !important; 
-        margin: 0 !important; 
-        transition: all 0.3s ease !important;
-    } 
-    .modal-input:focus { 
-        border-color: #8b7355 !important; /* 金色系 */
-        box-shadow: 0 0 0 2px rgba(139, 115, 85, 0.2) !important;
-        outline: none !important;
-    } 
-    /* Placeholder color adjustment */
-    .modal-input::placeholder {
-        color: rgba(255, 255, 255, 0.4) !important;
-    }
-
-    /* 5. 按钮区域 */ 
-    #customModal .modal-actions { 
-        display: flex !important; 
-        justify-content: center !important; 
-        gap: 20px !important; 
-        margin-top: 0 !important; 
-        padding-top: 10px !important; 
-        
-        position: static !important; 
-        width: 100% !important; 
-    } 
-    
-    /* 6. 按钮本身 */ 
-    #customModal .modal-btn { 
-        height: 40px !important; 
-        min-width: 110px !important; 
-    } 
   </style>
 </head>
 <body>
@@ -173,7 +92,7 @@
       try{ const r = await fetch('/api/session'); if (!r.ok) { currentUser=null; return; } const d = await r.json(); currentUser = (d && d.loggedIn) ? (d.user||null) : null; }
       catch(e){ currentUser=null; }
     }
-    function renderNavigation(){ const nav=document.getElementById('navActions'); if (!currentUser){ nav.innerHTML = '<button class="nav-item" onclick="showLoginModal()">登录</button><button class="nav-item" onclick="showRegisterModal()">申请成为会员</button>'; }
+    function renderNavigation(){ const nav=document.getElementById('navActions'); if (!currentUser){ nav.innerHTML = '<button class="nav-item" onclick="openLoginModal()">登录</button><button class="nav-item" onclick="showRegisterModal()">申请成为会员</button>'; }
       else { const admin = currentUser.status==='admin' ? '<a href="/admin" class="nav-item">管理后台</a>' : ''; nav.innerHTML = `<div class="user-info"><span>欢迎，${currentUser.username}</span><span class="user-role">${getStatusText(currentUser.status)}</span></div>${admin}<button class=\"nav-item logout-btn\" onclick=\"logout()\">退出登录</button>`; } }
     function renderHeroSection(){ const hero=document.getElementById('heroActions'); if (!currentUser){ hero.innerHTML = '<button class="btn btn-primary" onclick="showRegisterModal()" style="font-size:1.1rem;padding:.75rem 2rem">开始探索之旅</button>'; }
       else if (currentUser.status==='pending'){ hero.innerHTML = '<div class="message message-warning">您的会员申请正在审核中，请耐心等待...</div>'; }
@@ -182,20 +101,22 @@
     function navigateToTool(p){ if (!currentUser){ showMessage('请先登录并成为会员','error'); showLoginModal(); return; } if (currentUser.status==='pending'){ showMessage('您的会员申请正在审核中，请耐心等待','warning'); return; } if (currentUser.status==='blacklisted'){ showMessage('您的账号已被加入黑名单','error'); return; } if (currentUser.status==='member' || currentUser.status==='admin'){ location.href='/' + p; } }
     function showMessage(msg,type){ const c=document.getElementById('messageContainer'); const el=document.createElement('div'); el.className='message message-'+type; el.textContent=msg; c.appendChild(el); setTimeout(()=>{ el.remove(); },5000); }
     function logout(){ fetch('/api/logout',{method:'POST'}).then(()=>{ currentUser=null; renderNavigation(); renderHeroSection(); showMessage('已成功退出登录','success'); }); }
-    function showLoginModal(){
+    function openLoginModal(){
       const html = `
-        <div class="login-form-container">
-          <div class="form-group">
+        <div class="login-form-wrapper">
+          <div class="input-group">
             <label>账号</label>
-            <input id="loginUser" type="text" class="modal-input" placeholder="请输入账号">
+            <input id="loginUser" type="text" class="clean-input" placeholder="请输入账号">
           </div>
-          <div class="form-group">
+          <div class="input-group">
             <label>密码</label>
-            <input id="loginPass" type="password" class="modal-input" placeholder="请输入密码">
+            <input id="loginPass" type="password" class="clean-input" placeholder="请输入密码">
           </div>
-          <div id="loginError" class="error-msg"></div>
+          <div id="loginError" class="error-text"></div>
         </div>
       `;
+      const actions = document.querySelector('#customModal .modal-actions');
+      if (actions) actions.removeAttribute('style');
       showModal('登录 / 注册', html, async () => {
         const u = document.getElementById('loginUser').value;
         const p = document.getElementById('loginPass').value;
@@ -213,6 +134,8 @@
       const confirmBtn = document.getElementById('modalConfirmBtn');
       if(confirmBtn) confirmBtn.innerText = "登录";
     }
+    // 兼容旧调用名
+    const showLoginModal = openLoginModal;
     function showRegisterModal(){
       const html = `
         <div class="login-form-container">
@@ -293,6 +216,6 @@
           </div> 
       </div> 
   </div>
-  <script src="modal.js"></script>
+  
 </body>
 </html>

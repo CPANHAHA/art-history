@@ -283,236 +283,177 @@ button.logout-btn:hover{background-color:var(--danger-color);color:#fff;border-c
   .card-competitors { --accent-color: #f97316; }
   .card-roadmap { --accent-color: #38bdf8; }
 
-/* ==================== 
-   自定义弹窗样式 (Custom Modal) 
-   ==================== */ 
-
-/* 1. 遮罩层：覆盖全屏，半透明黑 */ 
-.modal-overlay { 
-    position: fixed; 
-    top: 0; 
-    left: 0; 
-    width: 100%; 
-    height: 100%; 
-    background-color: rgba(0, 0, 0, 0.7); /* 深色背景模糊 */ 
-    backdrop-filter: blur(4px); /* 高级感毛玻璃效果 */ 
-    display: flex; /* Flex布局实现居中 */ 
-    justify-content: center; 
-    align-items: center; 
-    z-index: 9999; /* 保证在最顶层 */ 
-    opacity: 0; 
-    visibility: hidden; 
-    transition: all 0.3s ease; 
-} 
-
-/* 显示状态 */ 
-.modal-overlay.active { 
-    opacity: 1; 
-    visibility: visible; 
-} 
-
-/* 2. 弹窗主体：Web3 卡片风格 */ 
-.modal-box { 
-    background-color: var(--bg-card); /* 跟你的卡片背景一致 */ 
-    border: 1px solid var(--border-color); 
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5); 
-    border-radius: 12px; 
-    padding: 24px 30px; 
-    width: 90%; 
-    max-width: 400px; 
-    transform: scale(0.9); 
-    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-    text-align: center; 
-} 
-
-/* 弹窗弹出动画 */ 
-.modal-overlay.active .modal-box { 
-    transform: scale(1); 
-} 
-
-/* 标题和内容 */ 
-.modal-title { 
-    color: var(--text-primary); 
-    font-size: 1.2rem; 
-    font-weight: bold; 
-    margin-bottom: 12px; 
-} 
-
-.modal-content { 
-    color: var(--text-secondary); 
-    font-size: 0.95rem; 
-    margin-bottom: 24px; 
-    line-height: 1.5; 
-} 
-
-/* 按钮组 */ 
-.modal-actions { 
-    display: flex; 
-    justify-content: center; 
-    gap: 15px; 
-} 
-
-/* 弹窗里的按钮微调 */ 
-.modal-btn { 
-    padding: 8px 24px; 
-    border-radius: 6px; 
-    cursor: pointer; 
-    font-size: 0.9rem; 
-    border: none; 
-    transition: all 0.2s; 
-} 
-
-.btn-cancel { 
-    background: transparent; 
-    border: 1px solid var(--border-color); 
-    color: var(--text-secondary); 
-} 
-.btn-cancel:hover { 
-    background: rgba(255,255,255,0.05); 
-    color: white; 
-} 
-
-.btn-confirm { 
-    background: var(--accent-color); /* 你的主题蓝 */ 
-    color: white; 
-    box-shadow: 0 0 10px rgba(59, 130, 246, 0.4); 
-} 
-.btn-confirm:hover { 
-    filter: brightness(1.1); 
+/* ========================================== 
+   Custom Modal Styles (Refactored)
+   ========================================== */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
 }
 
-/* ========================================================= 
-   ☢️ 核武器级弹窗修复 (Nuclear Fix v2.0) 
-   ========================================================= */ 
-/* 1. 强制重置弹窗容器：高度自适应，去死固定高度 */ 
-#customModal .modal-box { 
-    display: flex !important; 
-    flex-direction: column !important; /* 垂直排列 */ 
-    justify-content: flex-start !important; /* 内容从上往下排，不要居中对齐 */ 
-    
-    width: 90% !important; 
-    max-width: 400px !important; 
-    height: auto !important;     /* 关键：高度随内容自动撑开 */ 
-    min-height: 250px !important; 
-    max-height: 90vh !important; /* 防止超出屏幕 */ 
-    
-    background-color: #151a23 !important; 
-    border: 1px solid #334155 !important; 
-    border-radius: 16px !important; 
-    padding: 30px !important; 
-    
-    position: relative !important; /*以此为基准 */ 
-    overflow-y: auto !important;   /* 内容太多时允许滚动 */ 
-} 
-
-/* 2. 强制内容区域：占据独立空间 */
-#customModal .modal-content {
-    flex-grow: 1 !important; /* 占据剩余空间 */
-    width: 100% !important;
-    margin-bottom: 20px !important; /* 给下方按钮留出距离 */
-    
-    text-align: center !important; /* 修复拉黑弹窗文字偏左 */
-    padding: 0 10px !important;
-    
-    background: transparent !important;
-    border: none !important;
-    color: #cbd5e1 !important;
+.modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
 }
 
-/* 3. 强制输入框：块级显示，拒绝并排 */
-#customModal input {
-    display: block !important; 
-    width: 100% !important;
-    margin-bottom: 15px !important; /* 输入框之间、输入框与按钮之间的间距 */
-    box-sizing: border-box !important; /* 防止 padding 撑大宽度 */
-    height: 44px !important;
-    
-    background-color: #0f1218 !important;
-    border: 1px solid #2d3748 !important;
-    color: #fff !important;
-    padding: 0 15px !important;
-    border-radius: 8px !important;
+.modal-box {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+    border: 1px solid #404040;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    color: #f0f0f0;
+    padding: 32px;
+    width: 90%;
+    max-width: 420px;
+    max-height: 90vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    transform: scale(0.95);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-/* 4. 强制按钮容器：取消绝对定位，回归文档流 */ 
-#customModal .modal-actions { 
-    position: static !important; /* 关键！防止按钮吸在底部挡住输入框 */ 
-    margin-top: 0 !important; 
-    padding-top: 10px !important; 
-    width: 100% !important; 
-    
-    display: flex !important; 
-    justify-content: center !important; 
-    gap: 15px !important; 
-    flex-shrink: 0 !important; /* 防止被压缩 */ 
-} 
-
-/* 5. 强制按钮样式：统一美观 */
-#customModal .modal-btn {
-    flex: 1 !important; /* 按钮平分宽度 */
-    max-width: 120px !important; /* 但别太宽 */
-    margin: 0 !important;
-    height: 40px !important;
-    border-radius: 6px !important;
-    cursor: pointer !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    font-size: 14px !important;
+.modal-overlay.active .modal-box {
+    transform: scale(1);
 }
 
-#customModal .btn-confirm { 
-    background-color: #3b82f6 !important; 
-    color: white !important; 
-    border: none !important; 
-} 
-#customModal .btn-cancel { 
-    background-color: transparent !important; 
-    border: 1px solid #475569 !important; 
-    color: #94a3b8 !important; 
+.modal-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: white;
+    margin: 0;
+    text-align: center;
 }
 
-/* ==================== 
-   JS 动态内容的样式补充 
-   ==================== */ 
-
-/* 登录表单容器 */ 
-.login-form-container { 
-    display: flex; 
-    flex-direction: column; 
-    gap: 15px; 
-    width: 100%; 
-} 
-
-/* 输入框通用样式 */ 
-.modal-input { 
-    width: 100%; 
-    height: 44px; 
-    padding: 10px; 
-    background: #0f1218; 
-    border: 1px solid #2d3748; 
-    border-radius: 8px; 
-    color: white; 
-    box-sizing: border-box; /* 必须有 */ 
-    outline: none; 
-    display: block; /* 独占一行 */ 
-} 
-.modal-input:focus { 
-    border-color: #3b82f6; 
-} 
-
-/* 标签样式 */ 
-.form-group label { 
-    display: block; 
-    margin-bottom: 5px; 
-    color: #94a3b8; 
-    font-size: 0.9rem; 
-    text-align: left; 
-} 
-
-/* 错误信息 */ 
-.error-msg { 
-    color: #ef4444; 
-    font-size: 0.85rem; 
-    min-height: 10px; 
+/* Form Elements */
+.modal-overlay .modal-content {
+    width: 100%;
+    position: static;
+    transform: none;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    max-width: none;
+    max-height: none;
+    overflow: visible;
+    padding: 0;
+    margin: 0;
 }
+
+.login-form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    font-size: 0.9rem;
+    color: #a1a1aa;
+    margin-left: 4px;
+}
+
+.modal-input {
+    width: 100%;
+    height: 44px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid #404040;
+    border-radius: 8px;
+    padding: 0 16px;
+    color: white;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+}
+
+.modal-input:focus {
+    outline: none;
+    border-color: #8b7355;
+    box-shadow: 0 0 0 2px rgba(139, 115, 85, 0.1);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.modal-input::placeholder {
+    color: #52525b;
+}
+
+.error-msg {
+    color: #ef4444;
+    font-size: 0.875rem;
+    min-height: 20px;
+    text-align: center;
+}
+
+/* Modal Actions */
+.modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 8px;
+    position: static;
+}
+
+.modal-btn {
+    height: 40px;
+    padding: 0 24px;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 100px;
+}
+
+.btn-cancel {
+    background: transparent;
+    border: 1px solid #52525b;
+    color: #a1a1aa;
+}
+
+.btn-cancel:hover {
+    border-color: #71717a;
+    color: white;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.btn-confirm {
+    background: #3b82f6;
+    border: 1px solid transparent;
+    color: white;
+}
+
+.btn-confirm:hover {
+    background: #2563eb;
+}
+
+/* ====================
+   登录弹窗精准补丁（兼容新类名）
+   ==================== */
+.login-form-wrapper{display:flex;flex-direction:column;gap:20px;width:100%;padding:10px 0}
+.input-group{display:flex;flex-direction:column;gap:8px;text-align:left}
+.input-group label{color:#94a3b8;font-size:14px;font-weight:500}
+.clean-input{width:100%;height:44px;padding:0 15px;background:#0f1218;border:1px solid #334155;border-radius:8px;color:#fff;font-size:15px;outline:none;box-sizing:border-box;transition:border-color .2s}
+.clean-input:focus{border-color:#3b82f6;box-shadow:0 0 0 2px rgba(59,130,246,.2)}
+.error-text{color:#ef4444;font-size:.875rem;min-height:20px;text-align:center}
+#customModal .modal-box{height:auto;min-height:auto}

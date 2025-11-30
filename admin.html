@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>管理后台 · Web3大航海</title>
   <link rel="stylesheet" href="/styles.css">
+  <script src="modal.js"></script>
   <style>
     /* Admin specific overrides */
     .admin-container { max-width: 1000px; margin: 0 auto; padding: 40px 20px; }
@@ -31,88 +32,6 @@
     
     button.status-badge { transition: all 0.2s; cursor: pointer; }
     button.status-badge:hover { opacity: 0.8; transform: translateY(-1px); }
-  </style>
-  <style> 
-    /* 1. 弹窗大盒子：垂直排列，高度自适应 - 融入艺术风格 */ 
-    #customModal .modal-box { 
-        display: flex !important; 
-        flex-direction: column !important; 
-        justify-content: flex-start !important; 
-        align-items: stretch !important; 
-        
-        width: 90% !important; 
-        max-width: 400px !important; 
-        height: auto !important; 
-        padding: 30px !important; 
-        
-        /* Art Style Integration */
-        background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%) !important; 
-        border: 1px solid #404040 !important; 
-        border-radius: 12px !important; 
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
-        color: #f0f0f0 !important;
-    } 
-
-    /* 2. 内容区域 */ 
-    #customModal .modal-content { 
-        display: block !important; 
-        width: 100% !important; 
-        margin-bottom: 25px !important; 
-        background: transparent !important; 
-        padding: 0 !important; 
-    } 
-
-    /* 3. 表单容器 */ 
-    .login-form-container { 
-        display: flex !important; 
-        flex-direction: column !important; 
-        gap: 20px !important; 
-        width: 100% !important; 
-    } 
-
-    /* 4. 输入框 - 艺术风格 */ 
-    .modal-input { 
-        display: block !important; 
-        width: 100% !important; 
-        height: 44px !important; 
-        box-sizing: border-box !important; 
-        
-        /* Art Style Input */
-        background: rgba(255, 255, 255, 0.1) !important; 
-        border: 1px solid #555 !important; 
-        border-radius: 6px !important; 
-        color: white !important; 
-        padding: 0 12px !important; 
-        margin: 0 !important; 
-        transition: all 0.3s ease !important;
-    } 
-    .modal-input:focus { 
-        border-color: #8b7355 !important; /* 金色系 */
-        box-shadow: 0 0 0 2px rgba(139, 115, 85, 0.2) !important;
-        outline: none !important;
-    } 
-    /* Placeholder color adjustment */
-    .modal-input::placeholder {
-        color: rgba(255, 255, 255, 0.4) !important;
-    }
-
-    /* 5. 按钮区域 */ 
-    #customModal .modal-actions { 
-        display: flex !important; 
-        justify-content: center !important; 
-        gap: 20px !important; 
-        margin-top: 0 !important; 
-        padding-top: 10px !important; 
-        
-        position: static !important; 
-        width: 100% !important; 
-    } 
-    
-    /* 6. 按钮本身 */ 
-    #customModal .modal-btn { 
-        height: 40px !important; 
-        min-width: 110px !important; 
-    } 
   </style>
 </head>
 <body>
@@ -167,7 +86,6 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="modal.js"></script>
   <script src="admin.js?v=5"></script>
 </body>
 </html>
