@@ -16,29 +16,34 @@ function initModal() {
     if (confirmBtn) {
         confirmBtn.onclick = async () => {
             if (confirmBtn.disabled) return;
+            const originalText = confirmBtn.innerText;
+            let settled = false;
+            confirmBtn.disabled = true;
+            confirmBtn.innerText = '处理中...';
+            confirmBtn.dataset.loading = '1';
 
-            if (currentConfirmCallback) {
-                // Support async callbacks and validation
-                const originalText = confirmBtn.innerText;
-                confirmBtn.disabled = true;
-                confirmBtn.innerText = '处理中...';
-                
-                try {
+            try {
+                if (currentConfirmCallback) {
                     const result = await currentConfirmCallback();
                     if (result === false) {
                         confirmBtn.disabled = false;
                         confirmBtn.innerText = originalText;
-                        return; 
+                        delete confirmBtn.dataset.loading;
+                        return;
                     }
-                } catch (e) {
-                    console.error('Modal callback error:', e);
-                    confirmBtn.disabled = false;
-                    confirmBtn.innerText = originalText;
-                    return;
                 }
+                closeModal();
+                settled = true;
+            } catch (e) {
+                confirmBtn.disabled = false;
+                confirmBtn.innerText = originalText;
+                delete confirmBtn.dataset.loading;
+                return;
+            } finally {
+                confirmBtn.disabled = false;
+                confirmBtn.innerText = originalText;
+                delete confirmBtn.dataset.loading;
             }
-            closeModal();
-            if (confirmBtn) confirmBtn.disabled = false;
         };
     }
     if (cancelBtn) {
