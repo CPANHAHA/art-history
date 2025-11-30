@@ -102,6 +102,7 @@ class Handler(SimpleHTTPRequestHandler):
       return None
 
   def do_GET(self):
+    print(f"GET request for: {self.path}", flush=True)
     if self.path.startswith('/img/') or self.path.startswith('/api/img/'):
       pid = self.path.split('/img/',1)[1] if '/img/' in self.path else self.path.split('/api/img/',1)[1]
       url = IMG_MAP.get(pid)

@@ -26,10 +26,11 @@ async function loadUsers(){
   if (!tbody) return;
   tbody.innerHTML=''; msg.textContent='加载中...';
   
-  const r = await api('/api/admin/users');
+  // Add timestamp to prevent caching
+  const r = await api('/api/admin/users?t=' + Date.now());
   if (!r.ok){ 
     console.error('Load users failed:', r);
-    msg.innerHTML = '加载失败<br><small style="opacity:0.7">' + (typeof r.body === 'string' ? r.body.substring(0, 100) : 'Server Error') + '</small>'; 
+    msg.innerHTML = '加载失败: ' + r.body + '<br><small style="opacity:0.7">请检查网络或稍后重试</small>'; 
     return; 
   }
   msg.textContent = '';
