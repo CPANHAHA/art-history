@@ -15,12 +15,30 @@ function initModal() {
 
     if (confirmBtn) {
         confirmBtn.onclick = async () => {
+            if (confirmBtn.disabled) return;
+
             if (currentConfirmCallback) {
                 // Support async callbacks and validation
-                const result = await currentConfirmCallback();
-                if (result === false) return; 
+                const originalText = confirmBtn.innerText;
+                confirmBtn.disabled = true;
+                confirmBtn.innerText = '处理中...';
+                
+                try {
+                    const result = await currentConfirmCallback();
+                    if (result === false) {
+                        confirmBtn.disabled = false;
+                        confirmBtn.innerText = originalText;
+                        return; 
+                    }
+                } catch (e) {
+                    console.error('Modal callback error:', e);
+                    confirmBtn.disabled = false;
+                    confirmBtn.innerText = originalText;
+                    return;
+                }
             }
             closeModal();
+            if (confirmBtn) confirmBtn.disabled = false;
         };
     }
     if (cancelBtn) {

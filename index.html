@@ -114,21 +114,17 @@
           <div id="loginError" class="error" style="font-size:13px;margin-top:10px;min-height:20px"></div>
         </div>
       `;
-      showModal('登录', html, () => {
+      showModal('登录', html, async () => {
         const u = document.getElementById('loginUser').value;
         const p = document.getElementById('loginPass').value;
         const err = document.getElementById('loginError');
         if (!u || !p) { err.textContent = '请输入账号和密码'; return false; }
-        err.textContent = '登录中...';
-        login(u,p).then(ok => {
-             if(!ok) err.textContent = '登录失败'; // If login function returns false? login() is async and handles its own UI.
-             // My login function calls showModal on error, which overwrites the form.
-             // I should modify login() to NOT call showModal on error if called from here?
-             // Or just let it overwrite. Overwriting with error message is acceptable.
-             // But wait, login() implementation:
-             // else { showModal('登录失败', d.error||'登录失败'); }
-             // This will replace the form with error modal. That's fine.
-        });
+        
+        const res = await login(u,p);
+        if (!res.success) {
+             err.textContent = res.message;
+             return false;
+        }
       });
     }
     function showRegisterModal(){
@@ -145,7 +141,7 @@
           <div id="regError" class="error" style="font-size:13px;margin-top:10px;min-height:20px"></div>
         </div>
       `;
-      showModal('申请会员', html, () => {
+      showModal('申请会员', html, async () => {
         const u = document.getElementById('regUser').value;
         const p = document.getElementById('regPass').value;
         const err = document.getElementById('regError');
@@ -153,11 +149,45 @@
         if (!/^[a-zA-Z0-9]{6,8}$/.test(u)){ err.textContent = '账号必须是6-8位字母或数字'; return false; }
         if (!p) { err.textContent = '请输入密码'; return false; }
         if (p.length!==8){ err.textContent = '密码必须是8位'; return false; }
-        register(u,p);
+        
+        const res = await register(u,p);
+        if (!res.success) {
+            err.textContent = res.message;
+            return false;
+        }
       });
     }
-    async function login(username,password){ try{ const r=await fetch('/api/login',{ method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({username,password}) }); const d=await r.json(); if (r.ok){ await checkAuthStatus(); renderNavigation(); renderHeroSection(); showMessage('登录成功','success'); } else { showModal('登录失败', d.error||'登录失败'); } } catch(e){ showModal('错误', '登录失败，请稍后重试'); } }
-    async function register(username,password){ try{ const r=await fetch('/api/register',{ method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({username,password}) }); const d=await r.json(); if (r.ok){ showModal('申请成功', '注册成功，请等待管理员审核'); } else { showModal('注册失败', d.error||'注册失败'); } } catch(e){ showModal('错误', '注册失败，请稍后重试'); } }
+    async function login(username,password){ 
+      try{ 
+        const r=await fetch('/api/login',{ method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({username,password}) }); 
+        const d=await r.json(); 
+        if (r.ok){ 
+          await checkAuthStatus(); 
+          renderNavigation(); 
+          renderHeroSection(); 
+          showMessage('登录成功','success'); 
+          return { success: true };
+        } else { 
+          return { success: false, message: d.error||'登录失败' };
+        } 
+      } catch(e){ 
+        return { success: false, message: '登录失败，请稍后重试' };
+      } 
+    }
+    async function register(username,password){ 
+      try{ 
+        const r=await fetch('/api/register',{ method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({username,password}) }); 
+        const d=await r.json(); 
+        if (r.ok){ 
+          showModal('申请成功', '注册成功，请等待管理员审核'); 
+          return { success: true };
+        } else { 
+          return { success: false, message: d.error||'注册失败' };
+        } 
+      } catch(e){ 
+        return { success: false, message: '注册失败，请稍后重试' };
+      } 
+    }
     window.addEventListener('load', init);
   </script>
   
