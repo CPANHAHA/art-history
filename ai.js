@@ -856,7 +856,7 @@
         </div>
         <div style="display:flex;gap:4px">
           <button class="btn-icon-only edit-inline" title="编辑" onclick="editCategory('${cat.id}')">✏️</button>
-          ${(cat.id!=='qita' && cat.id!=='ALL') ? `<button class="btn-icon-only edit-inline" title="删除" style="color:var(--color-bad)" onclick="deleteCategory('${cat.id}')">🗑</button>` : ''}
+          ${(cat.id!=='qita' && cat.id!=='ALL') ? `<button class="btn-icon-only edit-inline" title="删除" style="color:var(--color-bad)" onclick="deleteCategory('${cat.id}', this)">🗑</button>` : ''}
         </div>
       `;
       container.appendChild(div);
@@ -874,7 +874,7 @@
     window.renderTabs();
   };
 
-  window.deleteCategory = async function(id) {
+  window.deleteCategory = async function(id, srcBtn) {
     const cat = window.categories.find(c=>c.id===id);
     if (!cat) return;
     const html = `
@@ -893,6 +893,9 @@
       if (!r.ok){
         const msg = (r.body && (r.body.error||r.body.message)) || String(r.body||'');
         if (/not\s*found|不存在/i.test(msg)){
+          // 已被其他操作删除，移除行并同步刷新
+          const row = srcBtn && srcBtn.closest('.list-item');
+          if (row){ row.style.transition='all .3s'; row.style.opacity='0'; setTimeout(()=> row.remove(), 300); }
           window.closeModal();
           window.reports.forEach(x=>{ if (x.category===cat.id) x.category='qita'; });
           await window.loadData();
@@ -907,6 +910,8 @@
         return false;
       }
       window.reports.forEach(x=>{ if (x.category===cat.id) x.category='qita'; });
+      const row = srcBtn && srcBtn.closest('.list-item');
+      if (row){ row.style.transition='all .3s'; row.style.opacity='0'; setTimeout(()=> row.remove(), 300); }
       await window.loadData();
       window.currentCatFilter = 'ALL';
       window.renderCategoryList();

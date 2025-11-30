@@ -167,11 +167,12 @@ async function loadCategories(){
   const frag = document.createDocumentFragment();
   items.forEach(c => {
     const row = document.createElement('div');
+    row.className = 'category-row';
     row.style.display='flex'; row.style.justifyContent='space-between'; row.style.alignItems='center'; row.style.margin='6px 0';
     const name = document.createElement('span'); name.textContent = `${c.name} (${c.id})`;
     const actions = document.createElement('div'); actions.style.display='flex'; actions.style.gap='8px';
     const renameBtn = document.createElement('button'); renameBtn.className='btn'; renameBtn.textContent='重命名'; renameBtn.onclick = ()=> renameCategory(c);
-    const delBtn = document.createElement('button'); delBtn.className='btn danger'; delBtn.textContent='删除'; delBtn.onclick = ()=> deleteCategory(c);
+    const delBtn = document.createElement('button'); delBtn.className='btn danger'; delBtn.textContent='删除'; delBtn.onclick = function(){ deleteCategory(c, this); };
     actions.appendChild(renameBtn); actions.appendChild(delBtn);
     row.appendChild(name); row.appendChild(actions);
     frag.appendChild(row);
@@ -255,7 +256,7 @@ function renameCategory(c){
   const btn = document.getElementById('modalConfirmBtn'); if(btn) btn.innerText='保存';
 }
 
-function deleteCategory(c){
+function deleteCategory(c, srcBtn){
   const html = `
     <div class="login-form-wrapper">
       <div class="input-group">
@@ -272,7 +273,9 @@ function deleteCategory(c){
     if (!rr.ok){
       const msg = (rr.body && (rr.body.error||rr.body.message)) || String(rr.body||'');
       if (/not\s*found|不存在/i.test(msg)){
-        // 已被其他操作删除，视为成功并同步刷新
+        // 已被其他操作删除，视为成功；移除行，同步刷新
+        const row = srcBtn && srcBtn.closest('.category-row');
+        if (row){ row.style.transition='all .3s'; row.style.opacity='0'; setTimeout(()=> row.remove(), 300); }
         window.closeModal();
         await loadCategories();
         await loadReports();
@@ -282,6 +285,9 @@ function deleteCategory(c){
       if (errEl) errEl.textContent = msg || '删除失败';
       return false;
     }
+    // 成功后，先移除行避免二次点击
+    const row = srcBtn && srcBtn.closest('.category-row');
+    if (row){ row.style.transition='all .3s'; row.style.opacity='0'; setTimeout(()=> row.remove(), 300); }
     await loadCategories();
     await loadReports();
   });
