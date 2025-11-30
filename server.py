@@ -174,9 +174,19 @@ class Handler(SimpleHTTPRequestHandler):
         data = _load_data()
       self._send_json({"items": data['categories']})
       return
+    if self.path.startswith('/api/session'):
+      # Default to admin for standalone deployment
+      self._send_json({"loggedIn": True, "user": {"username": "admin", "status": "admin"}})
+      return
     return super().do_GET()
 
   def do_POST(self):
+    if self.path.startswith('/api/login'):
+      self._send_json({"ok": True, "user": {"username": "admin", "status": "admin"}})
+      return
+    if self.path.startswith('/api/logout'):
+      self._send_json({"ok": True})
+      return
     if self.path.startswith('/api/reports/') and self.path.endswith('/restore-last-edit'):
       parts = self.path.strip('/').split('/')
       rid = parts[2] if len(parts)>=3 else None
