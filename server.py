@@ -206,6 +206,15 @@ class Handler(SimpleHTTPRequestHandler):
       # Default to admin for standalone deployment
       self._send_json({"loggedIn": True, "user": {"username": "admin", "status": "admin"}})
       return
+    if self.path == '/admin' or self.path == '/admin/':
+      self.send_response(301)
+      self.send_header('Location', '/admin.html')
+      self.end_headers()
+      return
+    if self.path == '/healthz':
+      self.send_response(200)
+      self.wfile.write(b'OK')
+      return
     return super().do_GET()
 
   def do_POST(self):
