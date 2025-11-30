@@ -35,14 +35,17 @@
   </style>
 </head>
 <body>
-  <header class="site-header">
-    <h1>管理后台</h1>
-    <nav class="nav">
-      <a href="/">主页</a>
-      <a href="/ai-invest">AI投研助手</a>
-      <a href="/admin">后台</a>
-    </nav>
-  </header>
+  <nav class="navbar">
+    <div class="nav-brand">
+      <img src="/logo.png" alt="Web3 大航海 Logo" class="nav-logo" onerror="this.src='/logo.svg'">
+      Web3 大航海
+    </div>
+    <div class="nav-links">
+      <a href="/" class="nav-item">返回主页</a>
+      <a href="/invest.html" class="nav-item">AI投研助手</a>
+      <button id="logoutBtn" class="nav-item logout-btn">退出登录</button>
+    </div>
+  </nav>
   <main class="container">
     <section class="card">
       <div class="section-title">待审核用户</div>

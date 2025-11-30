@@ -45,7 +45,8 @@ async function recover(){
 }
 
 function bind(){
-  document.getElementById('btnRecover').addEventListener('click', recover);
+  const br = document.getElementById('btnRecover'); if (br) br.addEventListener('click', recover);
+  const lo = document.getElementById('logoutBtn'); if (lo) lo.addEventListener('click', async function(){ await api('/api/logout','POST'); location.href='/'; });
   loadUsers();
 }
 

@@ -5,6 +5,16 @@
   <title>Web3大航海 - 聚合投研工具平台</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚓</text></svg>">
+  <script>
+    (function(){
+      try{
+        const rm = function(){ document.querySelectorAll('script[src*="evmAsk.js"]').forEach(el=>el.remove()); };
+        rm();
+        const mo = new MutationObserver(rm);
+        mo.observe(document.documentElement, { childList:true, subtree:true });
+      }catch(e){}
+    })();
+  </script>
   <style>
     :root { --bg-app:#020617; --bg-card:#1e293b; --bg-sidebar:#0f172a; --text-main:#f1f5f9; --text-muted:#94a3b8; --accent:#38bdf8; --accent-hover:#0ea5e9; --border:#334155; --radius-md:8px; --radius-lg:12px }
     *{box-sizing:border-box;margin:0;padding:0}
@@ -42,12 +52,8 @@
 </head>
 <body>
   <nav class="navbar">
-    <div class="container">
-      <div class="nav-content">
-        <div class="logo"><div class="logo-dot"></div><span>Web3大航海</span></div>
-        <div class="nav-actions" id="navActions"></div>
-      </div>
-    </div>
+    <div class="nav-brand"><img src="/logo.png" alt="Web3 大航海 Logo" class="nav-logo" onerror="this.src='/logo.svg'">Web3 大航海</div>
+    <div class="nav-links" id="navActions"></div>
   </nav>
   <div class="container"><div id="messageContainer"></div></div>
   <section class="hero">
@@ -83,8 +89,8 @@
       try{ const r = await fetch('/api/session'); if (!r.ok) { currentUser=null; return; } const d = await r.json(); currentUser = (d && d.loggedIn) ? (d.user||null) : null; }
       catch(e){ currentUser=null; }
     }
-    function renderNavigation(){ const nav=document.getElementById('navActions'); if (!currentUser){ nav.innerHTML = '<button class="btn" onclick="showLoginModal()">登录</button><button class="btn btn-primary" onclick="showRegisterModal()">申请成为会员</button>'; }
-      else { const admin = currentUser.status==='admin' ? '<a href="/admin" class="btn">管理后台</a>' : ''; nav.innerHTML = `<div class="user-info"><span>欢迎，${currentUser.username}</span><span class="user-role">${getStatusText(currentUser.status)}</span></div>${admin}<button class=\"btn\" onclick=\"logout()\">退出</button>`; } }
+    function renderNavigation(){ const nav=document.getElementById('navActions'); if (!currentUser){ nav.innerHTML = '<a href="/invest.html" class="nav-item">AI投研助手</a><button class="nav-item" onclick="showLoginModal()">登录</button><button class="nav-item" onclick="showRegisterModal()">申请成为会员</button>'; }
+      else { const admin = currentUser.status==='admin' ? '<a href="/admin" class="nav-item">管理后台</a>' : ''; nav.innerHTML = `<a href="/invest.html" class="nav-item">AI投研助手</a><div class="user-info"><span>欢迎，${currentUser.username}</span><span class="user-role">${getStatusText(currentUser.status)}</span></div>${admin}<button class=\"nav-item logout-btn\" onclick=\"logout()\">退出登录</button>`; } }
     function renderHeroSection(){ const hero=document.getElementById('heroActions'); if (!currentUser){ hero.innerHTML = '<button class="btn btn-primary" onclick="showRegisterModal()" style="font-size:1.1rem;padding:.75rem 2rem">开始探索之旅</button>'; }
       else if (currentUser.status==='pending'){ hero.innerHTML = '<div class="message message-warning">您的会员申请正在审核中，请耐心等待...</div>'; }
       else if (currentUser.status==='member' || currentUser.status==='admin'){ hero.innerHTML = '<div class="message message-success">欢迎回来！您可以开始使用所有工具功能</div>'; } }

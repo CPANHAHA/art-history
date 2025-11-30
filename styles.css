@@ -56,3 +56,37 @@ body{margin:0;background:var(--bg);color:var(--text);font:16px/1.6 system-ui,-ap
   .section{padding-left:20px}
 }
 @media (max-width:700px){.modal-grid{grid-template-columns:1fr}}
+:root{
+  --bg-card: var(--card);
+  --border-color: var(--border);
+  --danger-color: #ef4444;
+  --text-primary: var(--text);
+  --text-secondary: var(--muted);
+  --accent-color: var(--accent);
+}
+.navbar{
+  display:flex;justify-content:space-between;align-items:center;
+  background-color: var(--bg-card);
+  border-bottom:1px solid var(--border-color);
+  padding:0 40px;height:64px;position:sticky;top:0;z-index:100;
+  box-shadow:0 4px 6px -1px rgba(0,0,0,0.2);
+}
+.nav-brand{
+  font-size:1.25rem;font-weight:800;color:var(--text-primary);
+  letter-spacing:.5px;display:flex;align-items:center;gap:12px;
+}
+.nav-links{display:flex;align-items:center;gap:20px}
+.nav-item{
+  text-decoration:none;color:var(--text-secondary);font-size:.95rem;font-weight:500;
+  transition:color .2s, background-color .2s;padding:8px 12px;border-radius:6px;cursor:pointer;
+}
+.nav-item:hover{color:var(--text-primary);background-color:rgba(255,255,255,.05)}
+button.logout-btn{background:transparent;border:1px solid var(--danger-color);color:var(--danger-color);font-family:inherit}
+button.logout-btn:hover{background-color:var(--danger-color);color:#fff}
+.nav-logo{height:40px;width:auto;filter:drop-shadow(0 0 3px rgba(59,130,246,.6));display:block}
+@media (max-width:600px){
+  .navbar{padding:0 15px;font-size:.9rem}
+  .nav-brand{font-size:1.1rem}
+  .nav-links{gap:10px}
+  .nav-item{padding:5px 8px}
+}
