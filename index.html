@@ -21,11 +21,7 @@
     *{box-sizing:border-box;margin:0;padding:0}
     body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg-app);color:var(--text-main);min-height:100vh;line-height:1.6}
     .container{max-width:1200px;margin:0 auto;padding:0 20px}
-    .navbar{background:var(--bg-sidebar);border-bottom:1px solid var(--border);padding:1rem 0;position:sticky;top:0;z-index:100}
-    .nav-content{display:flex;justify-content:space-between;align-items:center}
-    .logo{display:flex;align-items:center;gap:12px;font-size:1.5rem;font-weight:700;color:var(--text-main)}
-    .logo-dot{width:10px;height:10px;background:var(--accent);border-radius:50%;box-shadow:0 0 12px var(--accent)}
-    .nav-actions{display:flex;gap:1rem;align-items:center}
+    /* Navbar styles moved to styles.css to ensure consistency */
     .btn{padding:.5rem 1rem;border-radius:var(--radius-md);border:1px solid var(--border);background:var(--bg-card);color:var(--text-main);text-decoration:none;font-size:.9rem;font-weight:500;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:.5rem}
     .btn:hover{border-color:var(--accent);color:var(--accent)}
     .btn-primary{background:var(--accent);border-color:var(--accent);color:#0b1120}
@@ -93,8 +89,8 @@
       try{ const r = await fetch('/api/session'); if (!r.ok) { currentUser=null; return; } const d = await r.json(); currentUser = (d && d.loggedIn) ? (d.user||null) : null; }
       catch(e){ currentUser=null; }
     }
-    function renderNavigation(){ const nav=document.getElementById('navActions'); if (!currentUser){ nav.innerHTML = '<a href="/invest.html" class="nav-item">AI投研助手</a><button class="nav-item" onclick="showLoginModal()">登录</button><button class="nav-item" onclick="showRegisterModal()">申请成为会员</button>'; }
-      else { const admin = currentUser.status==='admin' ? '<a href="/admin" class="nav-item">管理后台</a>' : ''; nav.innerHTML = `<a href="/invest.html" class="nav-item">AI投研助手</a><div class="user-info"><span>欢迎，${currentUser.username}</span><span class="user-role">${getStatusText(currentUser.status)}</span></div>${admin}<button class=\"nav-item logout-btn\" onclick=\"logout()\">退出登录</button>`; } }
+    function renderNavigation(){ const nav=document.getElementById('navActions'); if (!currentUser){ nav.innerHTML = '<button class="nav-item" onclick="showLoginModal()">登录</button><button class="nav-item" onclick="showRegisterModal()">申请成为会员</button>'; }
+      else { const admin = currentUser.status==='admin' ? '<a href="/admin" class="nav-item">管理后台</a>' : ''; nav.innerHTML = `<div class="user-info"><span>欢迎，${currentUser.username}</span><span class="user-role">${getStatusText(currentUser.status)}</span></div>${admin}<button class=\"nav-item logout-btn\" onclick=\"logout()\">退出登录</button>`; } }
     function renderHeroSection(){ const hero=document.getElementById('heroActions'); if (!currentUser){ hero.innerHTML = '<button class="btn btn-primary" onclick="showRegisterModal()" style="font-size:1.1rem;padding:.75rem 2rem">开始探索之旅</button>'; }
       else if (currentUser.status==='pending'){ hero.innerHTML = '<div class="message message-warning">您的会员申请正在审核中，请耐心等待...</div>'; }
       else if (currentUser.status==='member' || currentUser.status==='admin'){ hero.innerHTML = '<div class="message message-success">欢迎回来！您可以开始使用所有工具功能</div>'; } }
