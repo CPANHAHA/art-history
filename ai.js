@@ -117,6 +117,59 @@
   window.refreshCategories = refreshCategories;
   window.refreshReports = refreshReports;
 
+  // Modal helpers
+  window.openModal = function(id){ const el = document.getElementById(id); if (el) el.style.display='flex'; };
+  window.closeModal = function(id){ const el = document.getElementById(id); if (el) el.style.display='none'; };
+
+  // Parse import text and prepare category selection
+  window.parseImport = function(){
+    try{
+      const txtEl = document.getElementById('importText');
+      const msgEl = document.getElementById('importMsg');
+      if (msgEl) { msgEl.textContent=''; msgEl.style.color=''; }
+      const txt = (txtEl?.value||'').trim();
+      if (!txt){ if(msgEl){ msgEl.textContent='请粘贴 JSON 文本'; msgEl.style.color='var(--color-bad)'; } return; }
+      const data = JSON.parse(txt);
+      if (!data.project_name || !data.ticker){ if(msgEl){ msgEl.textContent='JSON 缺少 project_name 或 ticker'; msgEl.style.color='var(--color-bad)'; } return; }
+      window.pendingImportData = data;
+      const sel = document.getElementById('catSelect');
+      if (sel){ sel.innerHTML = (Array.isArray(window.categories)?window.categories:[]).map(c=>`<option value="${c.id}">${c.name}</option>`).join('') + '<option value="__NEW__">--- 创建新分类 ---</option>'; }
+      const ng = document.getElementById('newCatGroup'); if (ng) ng.style.display='none';
+      window.closeModal('modalImport');
+      window.openModal('modalCategory');
+    }catch(e){ const msgEl = document.getElementById('importMsg'); if(msgEl){ msgEl.textContent='JSON 解析错误：'+e.message; msgEl.style.color='var(--color-bad)'; } }
+  };
+
+  // Minimal category list render in manage modal
+  window.renderCategoryList = function(){
+    const container = document.getElementById('categoryList'); if (!container) return;
+    const sorted = (Array.isArray(window.categories)?window.categories:[]).slice().sort((a,b)=>{ if(a.id==='qita' && b.id!=='qita') return 1; if(b.id==='qita' && a.id!=='qita') return -1; return String(a.name).localeCompare(String(b.name)); });
+    container.innerHTML = sorted.map(c=>{
+      const del = (c.id!=='qita') ? `<button class="btn" onclick="handleDelete('${c.id}')">删除</button>` : '';
+      return `<div class="list-item" style="margin-bottom:8px;display:flex;justify-content:space-between;align-items:center"><div style="font-weight:500">${c.name}</div><div style="display:flex;gap:8px">${del}</div></div>`;
+    }).join('');
+  };
+
+  // Tabs render (optional)
+  window.renderTabs = function(){
+    const el = document.querySelector('.category-tabs'); if (!el) return;
+    const cats = (Array.isArray(window.categories)?window.categories:[]).slice().sort((a,b)=>{ if(a.id==='qita' && b.id!=='qita') return 1; if(b.id==='qita' && a.id!=='qita') return -1; return String(a.name).localeCompare(String(b.name)); });
+    const all = [{id:'ALL',name:'全部'}, ...cats];
+    el.innerHTML = all.map(c=>`<button class="tab-btn">${c.name}</button>`).join('');
+  };
+
+  // Bind UI events after DOM ready
+  document.addEventListener('DOMContentLoaded', function(){
+    const nbp = document.getElementById('navBtnPrompt'); if (nbp) nbp.addEventListener('click', function(){ window.openModal('modalPrompt'); });
+    const nbi = document.getElementById('navBtnImport'); if (nbi) nbi.addEventListener('click', function(){ window.openModal('modalImport'); });
+    const bip = document.getElementById('btnImportParse'); if (bip) bip.addEventListener('click', window.parseImport);
+    const bci = document.getElementById('btnConfirmImport'); if (bci) bci.addEventListener('click', window.confirmImport);
+    const cs = document.getElementById('catSelect'); if (cs) cs.addEventListener('change', function(e){ const ng = document.getElementById('newCatGroup'); if (ng) ng.style.display = (e.target.value==='__NEW__'?'block':'none'); });
+    // Prompt inputs
+    ['pName','pTicker','pWeb','pTw','pNote'].forEach(id=>{ const el = document.getElementById(id); if (el) el.addEventListener('input', window.updatePrompt); });
+    const bgp = document.getElementById('btnGenPrompt'); if (bgp) bgp.addEventListener('click', function(){ window.updatePrompt(); const out = document.getElementById('pOutput'); if (out){ const txt = out.value||''; if (navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(()=>{ const m=document.getElementById('pMsg'); if(m){ m.textContent='Prompt已复制到剪贴板！'; m.style.color='var(--color-good)'; } }).catch(()=>{}); } else { out.select(); try{ document.execCommand('copy'); const m=document.getElementById('pMsg'); if(m){ m.textContent='Prompt已复制到剪贴板！'; m.style.color='var(--color-good)'; } }catch(e){ const m=document.getElementById('pMsg'); if(m){ m.textContent='复制失败，请手动复制。'; m.style.color='var(--color-bad)'; } } } } });
+  });
+
   window.updatePrompt = function(){
     try {
       const name = (document.getElementById('pName')?.value||'').trim();
