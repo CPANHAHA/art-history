@@ -44,8 +44,10 @@
 <body>
   <nav class="navbar">
     <div class="nav-brand">
-      <img src="/logo.png?v=2" alt="Web3 大航海 Logo" class="nav-logo" onerror="this.src='/logo.svg'">
-      <span class="brand-text">Web3 大航海</span>
+      <a href="/" style="display: flex; align-items: center; gap: 12px; text-decoration: none;">
+        <img src="/logo.png?v=2" alt="Web3 大航海 Logo" class="nav-logo" onerror="this.src='/logo.svg'">
+        <span class="brand-text">Web3 大航海</span>
+      </a>
     </div>
     <div class="nav-links" id="navActions"></div>
   </nav>
@@ -64,7 +66,7 @@
         if (!ok){ alert('仅会员或管理员可访问 AI 投研助手'); location.href='/'; return; }
         const nav=document.getElementById('navActions');
         const admin = (d.user.status==='admin') ? '<a href="/admin" class="nav-item">管理后台</a>' : '';
-        nav.innerHTML = '<a href="/" class="nav-item">返回主页</a>' + admin + '<button class="nav-item logout-btn" onclick="logout()">退出登录</button>';
+        nav.innerHTML = admin + '<button class="nav-item logout-btn" onclick="logout()">退出登录</button>';
       }catch(e){ location.href='/'; }
     })();
     function logout(){ fetch('/api/logout',{method:'POST'}).then(()=>{ location.href='/'; }); }

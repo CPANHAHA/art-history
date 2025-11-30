@@ -11,6 +11,7 @@ os.makedirs(CACHE_DIR, exist_ok=True)
 DATA_DIR = os.path.join(ROOT, 'data')
 os.makedirs(DATA_DIR, exist_ok=True)
 DATA_PATH = os.path.join(DATA_DIR, 'reports.json')
+USERS_PATH = os.path.join(DATA_DIR, 'users.json')
 
 _lock = threading.Lock()
 
@@ -19,17 +20,29 @@ def _ensure_data_file():
     initial = {"reports":[],"categories":[{"id":"qita","name":"其他"},{"id":"icm","name":"ICM"},{"id":"x402","name":"X402"}],"last_edits":[]}
     with open(DATA_PATH,'w',encoding='utf-8') as f:
       json.dump(initial,f,ensure_ascii=False)
+  if not os.path.exists(USERS_PATH):
+    # Seed with some dummy users for testing since auth is mocked
+    initial_users = [
+      {"username": "admin", "status": "admin", "created_at": "2023-01-01T00:00:00"},
+      {"username": "demo_user", "status": "member", "created_at": "2023-10-27T10:00:00"},
+      {"username": "bad_user", "status": "blacklisted", "created_at": "2023-11-01T12:00:00"}
+    ]
+    with open(USERS_PATH,'w',encoding='utf-8') as f:
+      json.dump(initial_users,f,ensure_ascii=False)
 
 def _load_data():
   _ensure_data_file()
   with open(DATA_PATH,'r',encoding='utf-8') as f:
-    return json.load(f)
+    d = json.load(f)
+  with open(USERS_PATH,'r',encoding='utf-8') as f:
+    u = json.load(f)
+  return d, u
 
-def _atomic_save(data):
-  tmp = DATA_PATH + '.tmp'
+def _atomic_save(data, path=DATA_PATH):
+  tmp = path + '.tmp'
   with open(tmp,'w',encoding='utf-8') as f:
     json.dump(data,f,ensure_ascii=False)
-  os.replace(tmp, DATA_PATH)
+  os.replace(tmp, path)
 
 IMG_MAP = {
   'classical': 'https://upload.wikimedia.org/wikipedia/commons/7/79/Venus_de_Milo_Louvre_Ma399_n4.jpg',
@@ -151,7 +164,7 @@ class Handler(SimpleHTTPRequestHandler):
       page = int(qs.get('page',['1'])[0] or '1')
       page_size = int(qs.get('page_size',['20'])[0] or '20')
       with _lock:
-        data = _load_data()
+        data, _ = _load_data()
       items = [r for r in data['reports'] if not r.get('deleted_at')]
       if category and category != 'ALL':
         items = [r for r in items if r.get('category') == category]
@@ -171,8 +184,13 @@ class Handler(SimpleHTTPRequestHandler):
       return
     if self.path.startswith('/api/categories'):
       with _lock:
-        data = _load_data()
+        data, _ = _load_data()
       self._send_json({"items": data['categories']})
+      return
+    if self.path.startswith('/api/admin/users'):
+      with _lock:
+        _, users = _load_data()
+      self._send_json({"items": users})
       return
     if self.path.startswith('/api/session'):
       # Default to admin for standalone deployment
@@ -194,7 +212,7 @@ class Handler(SimpleHTTPRequestHandler):
         self._send_json({"error":"Bad Request"},400)
         return
       with _lock:
-        data = _load_data()
+        data, _ = _load_data()
         snap = next((e for e in data['last_edits'] if e.get('report_id')==rid), None)
         if not snap:
           self._send_json({"error":"No snapshot"},404)
@@ -235,7 +253,7 @@ class Handler(SimpleHTTPRequestHandler):
       for k in keys:
         record[k] = obj.get(k)
       with _lock:
-        data = _load_data()
+        data, _ = _load_data()
         data['reports'].append(record)
         _atomic_save(data)
       self._send_json(record, 201)
@@ -248,13 +266,38 @@ class Handler(SimpleHTTPRequestHandler):
         return
       cid = name.lower().replace(' ','_')
       with _lock:
-        data = _load_data()
+        data, _ = _load_data()
         if any(c['id']==cid or c['name']==name for c in data['categories']):
           self._send_json({"error":"category exists"},409)
           return
         data['categories'].append({"id":cid,"name":name})
         _atomic_save(data)
       self._send_json({"id":cid,"name":name},201)
+      return
+    if self.path.startswith('/api/admin/users/'):
+      parts = self.path.strip('/').split('/')
+      if len(parts) < 5: # /api/admin/users/{username}/{action}
+        self._send_json({"error":"Bad Request"},400)
+        return
+      username = parts[3]
+      action = parts[4] # block or restore
+      
+      with _lock:
+        data, users = _load_data()
+        found = False
+        for u in users:
+          if u['username'] == username:
+            if action == 'block':
+              u['status'] = 'blacklisted'
+            elif action == 'restore':
+              u['status'] = 'member'
+            found = True
+            break
+        if found:
+          _atomic_save(users, USERS_PATH)
+          self._send_json({"ok":True})
+        else:
+          self._send_json({"error":"User not found"},404)
       return
     return super().do_POST()
 
@@ -268,7 +311,7 @@ class Handler(SimpleHTTPRequestHandler):
         return
       now = __import__('datetime').datetime.now().isoformat()
       with _lock:
-        data = _load_data()
+        data, _ = _load_data()
         idx = next((i for i,r in enumerate(data['reports']) if r.get('id')==rid), -1)
         if idx < 0:
           self._send_json({"error":"Not Found"},404)
@@ -303,7 +346,7 @@ class Handler(SimpleHTTPRequestHandler):
       rid = self.path.strip('/').split('/')[2]
       now = __import__('datetime').datetime.now().isoformat()
       with _lock:
-        data = _load_data()
+        data, _ = _load_data()
         for r in data['reports']:
           if r.get('id') == rid:
             r['deleted_at'] = now
@@ -319,7 +362,7 @@ class Handler(SimpleHTTPRequestHandler):
         self._send_json({"error":"'其他'不可删除"},400)
         return
       with _lock:
-        data = _load_data()
+        data, _ = _load_data()
         # remove category
         data['categories'] = [c for c in data['categories'] if c.get('id') != cid]
         # reassign reports to '其他'

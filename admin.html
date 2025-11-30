@@ -6,63 +6,54 @@
   <title>管理后台 · Web3大航海</title>
   <link rel="stylesheet" href="styles.css">
   <style>
-    :root { 
-      --bg-color: #0f172a;
-      --card-bg: #1e293b;
-      --text-primary: #f8fafc;
-      --text-secondary: #94a3b8;
-      --accent: #3b82f6;
-      --danger: #ef4444;
-      --success: #10b981;
+    /* Override or supplement styles.css if necessary, but try to use shared variables */
+    body { 
+      background-color: var(--bg); 
+      color: var(--text);
     }
-    body { background-color: var(--bg-color); color: var(--text-primary); font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; margin: 0; padding: 0; }
-    h1, h2 { font-weight: 700; letter-spacing: -0.5px; }
-    .container{max-width:980px;margin:0 auto;padding:20px}
-    .card{background-color: var(--card-bg); border:1px solid #334155; border-radius:8px; padding:16px; margin:12px 0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1)}
-    .section-title{font-size:1.3rem;font-weight:700;margin-bottom:12px}
-    button { background-color: var(--accent); color: #fff; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 500; transition: all 0.2s; }
-    button:hover { opacity: 0.9; transform: translateY(-1px); }
-    button.delete-btn { background-color: var(--danger); }
-    input, textarea, select { background-color: var(--card-bg); border: 1px solid #334155; color: #fff; padding: 10px; border-radius: 6px; width: 100%; box-sizing: border-box; margin-bottom: 10px; }
-    input:focus { outline: 2px solid var(--accent); border-color: transparent; }
-    table { width: 100%; border-collapse: collapse; margin-top: 20px; background-color: var(--card-bg); border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1) }
-    th, td { padding: 16px; text-align: left; border-bottom: 1px solid #334155; }
-    th { background-color: var(--bg-color); color: var(--text-secondary); font-size: 0.85rem; text-transform: uppercase; }
-    tr:hover { background-color: #334155; }
-    .status-badge { padding: 4px 8px; border-radius: 12px; font-size: 0.75rem; background-color: rgba(16,185,129,0.2); color: var(--success); }
-    .status-pending { background-color: rgba(59,130,246,0.2); color: var(--accent); }
-    .status-blacklisted { background-color: rgba(239,68,68,0.2); color: var(--danger); }
+    .container { max-width: 980px; margin: 0 auto; padding: 40px 20px; }
+    .card { 
+      background-color: var(--card); 
+      border: 1px solid var(--border); 
+      border-radius: 8px; 
+      padding: 24px; 
+      margin: 20px 0; 
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+    }
+    .section-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 20px; color: var(--text); }
+    
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { padding: 16px; text-align: left; border-bottom: 1px solid var(--border); }
+    th { color: var(--muted); font-size: 0.85rem; text-transform: uppercase; font-weight: 600; }
+    tr:hover { background-color: rgba(255,255,255,0.03); }
+    
+    .status-badge { padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; }
+    .status-admin { background-color: rgba(139, 92, 246, 0.2); color: #a78bfa; border: 1px solid rgba(139, 92, 246, 0.3); }
+    .status-member { background-color: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .status-blacklisted { background-color: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+    .status-pending { background-color: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+    
+    button.status-badge { transition: all 0.2s; }
+    button.status-badge:hover { opacity: 0.8; transform: scale(1.05); }
   </style>
 </head>
 <body>
   <nav class="navbar">
     <div class="nav-brand">
-      <img src="/logo.png?v=2" alt="Web3 大航海 Logo" class="nav-logo" onerror="this.src='/logo.svg'">
-      <span class="brand-text">Web3 大航海</span>
+      <a href="/" style="display: flex; align-items: center; gap: 12px; text-decoration: none;">
+        <img src="/logo.png?v=2" alt="Web3 大航海 Logo" class="nav-logo" onerror="this.src='/logo.svg'">
+        <span class="brand-text">Web3 大航海</span>
+      </a>
     </div>
     <div class="nav-links">
-      <a href="/" class="nav-item">返回主页</a>
       <button id="logoutBtn" class="nav-item logout-btn">退出登录</button>
     </div>
   </nav>
   <main class="container">
     <section class="card">
-      <div class="section-title">待审核用户</div>
+      <div class="section-title">已注册用户管理</div>
       <table>
-        <thead><tr><th>用户名</th><th>创建时间</th><th>操作</th></tr></thead>
-        <tbody id="pendingTbody"></tbody>
-      </table>
-      <div id="pendingMsg" class="help"></div>
-    </section>
-    <section class="card">
-      <div class="section-title">黑名单管理（恢复为 member）</div>
-      <div style="display:flex;gap:8px"><input id="recoverId" class="input" placeholder="粘贴用户ID"><button class="btn" id="btnRecover">恢复</button></div>
-      <div id="recoverMsg" class="help"></div>
-    </section>
-    <section class="card">
-      <div class="section-title">已注册用户</div>
-      <table>
-        <thead><tr><th>用户名</th><th>状态</th><th>创建时间</th></tr></thead>
+        <thead><tr><th>用户名</th><th>状态</th><th>创建时间</th><th>操作</th></tr></thead>
         <tbody id="usersTbody"></tbody>
       </table>
       <div id="usersMsg" class="help"></div>
@@ -71,16 +62,6 @@
   <footer class="site-footer">
     <small>仅管理员可访问；所有操作将记录于数据库。</small>
   </footer>
-  <script>
-    (async function(){
-      try{
-        const r = await fetch('/api/session');
-        const d = await r.json();
-        const ok = d && d.loggedIn && d.user && d.user.status==='admin';
-        if (!ok){ alert('仅管理员可访问后台'); location.href='/'; return; }
-      }catch(e){ location.href='/'; }
-    })();
-  </script>
   <script src="admin.js"></script>
 </body>
 </html>

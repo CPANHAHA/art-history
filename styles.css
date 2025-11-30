@@ -84,7 +84,7 @@ body{margin:0;background:var(--bg);color:var(--text);font:16px/1.6 system-ui,-ap
 .nav-item:hover{color:var(--text-primary);background-color:rgba(255,255,255,.08)}
 button.logout-btn{background:transparent;border:1px solid transparent;color:var(--text-secondary);font-family:inherit;margin-left:10px}
 button.logout-btn:hover{background-color:var(--danger-color);color:#fff;border-color:var(--danger-color)}
-.nav-logo{height:36px;width:auto;filter:drop-shadow(0 0 3px rgba(59,130,246,.6));display:block}
+.nav-logo{height:48px;width:auto;filter:drop-shadow(0 0 3px rgba(59,130,246,.6)) brightness(1.2);display:block}
 .brand-text{font-size:1.2rem;font-weight:700;color:var(--text-primary);letter-spacing:.5px}
 @media (max-width:600px){
   .navbar{padding:0 15px;font-size:.9rem}
