@@ -46,6 +46,77 @@
     .message-warning{background:rgba(234,179,8,.15);border:1px solid rgba(234,179,8,.3);color:#facc15}
     @media (max-width:768px){.hero h1{font-size:2rem}.hero p{font-size:1rem}.tools-grid{grid-template-columns:1fr}.nav-content{flex-direction:column;gap:1rem}.nav-actions{flex-wrap:wrap;justify-content:center}}
   </style>
+  <style> 
+    /* 1. 弹窗大盒子：垂直排列，高度自适应 */ 
+    #customModal .modal-box { 
+        display: flex !important; 
+        flex-direction: column !important; 
+        justify-content: flex-start !important; 
+        align-items: stretch !important; 
+        
+        width: 90% !important; 
+        max-width: 400px !important; 
+        height: auto !important; /* 让内容撑开高度 */ 
+        padding: 30px !important; 
+        
+        background-color: #151a23 !important; 
+        border: 1px solid #334155 !important; 
+        border-radius: 12px !important; 
+    } 
+
+    /* 2. 内容区域：给下方留出空间 */ 
+    #customModal .modal-content { 
+        display: block !important; 
+        width: 100% !important; 
+        margin-bottom: 25px !important; /* 推开底部的按钮 */ 
+        background: transparent !important; 
+        padding: 0 !important; 
+    } 
+
+    /* 3. JS生成的表单容器 */ 
+    .login-form-container { 
+        display: flex !important; 
+        flex-direction: column !important; 
+        gap: 20px !important; /* 输入框之间的间距 */ 
+        width: 100% !important; 
+    } 
+
+    /* 4. 输入框：强制修复高度和边框模型 */ 
+    .modal-input { 
+        display: block !important; 
+        width: 100% !important; 
+        height: 44px !important; 
+        box-sizing: border-box !important; /* 关键！防止撑破 */ 
+        
+        background: #0f1218 !important; 
+        border: 1px solid #2d3748 !important; 
+        color: white !important; 
+        padding: 0 12px !important; 
+        border-radius: 8px !important; 
+        margin: 0 !important; /* 间距由 gap 控制 */ 
+    } 
+    .modal-input:focus { 
+        border-color: #3b82f6 !important; 
+    } 
+
+    /* 5. 按钮区域：强制归位 */ 
+    #customModal .modal-actions { 
+        display: flex !important; 
+        justify-content: center !important; 
+        gap: 20px !important; 
+        margin-top: 0 !important; 
+        padding-top: 10px !important; 
+        
+        position: static !important; /* 严禁绝对定位 */ 
+        width: 100% !important; 
+    } 
+    
+    /* 6. 按钮本身 */ 
+    #customModal .modal-btn { 
+        height: 40px !important; 
+        min-width: 110px !important; 
+    } 
+  </style>
 </head>
 <body>
   <nav class="navbar">
@@ -102,19 +173,19 @@
     function logout(){ fetch('/api/logout',{method:'POST'}).then(()=>{ currentUser=null; renderNavigation(); renderHeroSection(); showMessage('已成功退出登录','success'); }); }
     function showLoginModal(){
       const html = `
-        <div style="text-align:left">
-          <div style="margin-bottom:16px">
-            <label style="display:block;color:var(--text-muted);font-size:12px;margin-bottom:6px">账号</label>
-            <input id="loginUser" class="input" style="width:100%;padding:10px;background:#0f1218" placeholder="请输入账号">
+        <div class="login-form-container">
+          <div class="form-group">
+            <label>账号</label>
+            <input id="loginUser" type="text" class="modal-input" placeholder="请输入账号">
           </div>
-          <div>
-            <label style="display:block;color:var(--text-muted);font-size:12px;margin-bottom:6px">密码</label>
-            <input id="loginPass" type="password" class="input" style="width:100%;padding:10px;background:#0f1218" placeholder="请输入密码">
+          <div class="form-group">
+            <label>密码</label>
+            <input id="loginPass" type="password" class="modal-input" placeholder="请输入密码">
           </div>
-          <div id="loginError" class="error" style="font-size:13px;margin-top:10px;min-height:20px"></div>
+          <div id="loginError" class="error-msg"></div>
         </div>
       `;
-      showModal('登录', html, async () => {
+      showModal('登录 / 注册', html, async () => {
         const u = document.getElementById('loginUser').value;
         const p = document.getElementById('loginPass').value;
         const err = document.getElementById('loginError');
@@ -126,19 +197,23 @@
              return false;
         }
       });
+      
+      // 强制设置按钮文字
+      const confirmBtn = document.getElementById('modalConfirmBtn');
+      if(confirmBtn) confirmBtn.innerText = "登录";
     }
     function showRegisterModal(){
       const html = `
-        <div style="text-align:left">
-          <div style="margin-bottom:16px">
-            <label style="display:block;color:var(--text-muted);font-size:12px;margin-bottom:6px">账号 (6-8位字母或数字)</label>
-            <input id="regUser" class="input" style="width:100%;padding:10px;background:#0f1218" placeholder="请输入账号">
+        <div class="login-form-container">
+          <div class="form-group">
+            <label>账号 (6-8位字母或数字)</label>
+            <input id="regUser" type="text" class="modal-input" placeholder="请输入账号">
           </div>
-          <div>
-            <label style="display:block;color:var(--text-muted);font-size:12px;margin-bottom:6px">密码 (8位)</label>
-            <input id="regPass" type="password" class="input" style="width:100%;padding:10px;background:#0f1218" placeholder="请输入密码">
+          <div class="form-group">
+            <label>密码 (8位)</label>
+            <input id="regPass" type="password" class="modal-input" placeholder="请输入密码">
           </div>
-          <div id="regError" class="error" style="font-size:13px;margin-top:10px;min-height:20px"></div>
+          <div id="regError" class="error-msg"></div>
         </div>
       `;
       showModal('申请会员', html, async () => {
@@ -156,6 +231,10 @@
             return false;
         }
       });
+      
+      // 强制设置按钮文字
+      const confirmBtn = document.getElementById('modalConfirmBtn');
+      if(confirmBtn) confirmBtn.innerText = "提交申请";
     }
     async function login(username,password){ 
       try{ 

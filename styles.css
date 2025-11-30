@@ -381,479 +381,138 @@ button.logout-btn:hover{background-color:var(--danger-color);color:#fff;border-c
     filter: brightness(1.1); 
 }
 
-/* ==================== 
-   弹窗样式终极修复 (FIX) 
-   ==================== */ 
-
-/* 1. 修复弹窗主体：增加宽度，加深背景 */ 
-.modal-box { 
-    background-color: #1e293b !important; /* 强制深色不透明背景 */ 
-    border: 1px solid #334155 !important; 
-    border-radius: 16px !important; 
-    padding: 30px !important; 
-    
-    /* 修复宽度问题 */ 
-    width: auto !important; 
-    min-width: 320px !important; 
-    max-width: 420px !important; 
-    
-    /* 修复文字颜色 */ 
-    color: #fff !important; 
-    box-shadow: 0 20px 50px rgba(0,0,0,0.5) !important; 
-} 
-
-/* 2. 修复弹窗里的输入框 (登录框) */ 
-.modal-box input { 
-    width: 100% !important; /* 强制填满容器，不要溢出 */ 
-    box-sizing: border-box !important; /* 关键：内边距不算在宽度里 */ 
-    margin-bottom: 15px !important; 
-    background-color: #0f172a !important; /* 深黑底色 */ 
-    border: 1px solid #334155 !important; 
-    color: #fff !important; 
-    padding: 12px !important; 
-    border-radius: 8px !important; 
-    height: auto !important; 
-} 
-
-.modal-box label { 
-    display: block !important; 
-    text-align: left !important; 
-    margin-bottom: 6px !important; 
-    color: #94a3b8 !important; 
-    font-size: 0.9rem !important; 
-} 
-
-/* 3. 修复确认弹窗那条奇怪的黑色横杠 */ 
-.modal-content { 
-    background: transparent !important; /* 去掉背景色 */ 
-    border: none !important;            /* 去掉边框 */ 
-    padding: 0 !important; 
-    margin: 15px 0 25px 0 !important; 
-    color: #cbd5e1 !important; 
-    font-size: 1rem !important; 
-    line-height: 1.6 !important; 
-    width: 100% !important; 
-    text-align: center !important; 
-} 
-
-/* 4. 标题修复 */ 
-.modal-title { 
-    font-size: 1.25rem !important; 
-    margin-bottom: 20px !important; 
-    color: #fff !important; 
-    font-weight: 600 !important; 
-} 
-
-/* 5. 按钮组布局 */ 
-.modal-actions { 
+/* ========================================================= 
+   ☢️ 核武器级弹窗修复 (Nuclear Fix v2.0) 
+   ========================================================= */ 
+/* 1. 强制重置弹窗容器：高度自适应，去死固定高度 */ 
+#customModal .modal-box { 
     display: flex !important; 
-    justify-content: center !important; 
-    gap: 15px !important; 
-    margin-top: 20px !important; 
-    width: 100% !important; 
-} 
-
-.modal-btn { 
-    min-width: 100px !important; /* 按钮不要太窄 */ 
-}
-
-/* ==================== 
-   弹窗样式终极修复 (FIX) 
-   ==================== */ 
-
-/* 1. 修复弹窗主体：增加宽度，加深背景 */ 
-.modal-box { 
-    background-color: #1e293b !important; /* 强制深色不透明背景 */ 
-    border: 1px solid #334155 !important; 
-    border-radius: 16px !important; 
-    padding: 30px !important; 
+    flex-direction: column !important; /* 垂直排列 */ 
+    justify-content: flex-start !important; /* 内容从上往下排，不要居中对齐 */ 
     
-    /* 修复宽度问题 */ 
-    width: auto !important; 
-    min-width: 320px !important; 
-    max-width: 420px !important; 
-    
-    /* 修复文字颜色 */ 
-    color: #fff !important; 
-    box-shadow: 0 20px 50px rgba(0,0,0,0.5) !important; 
-} 
-
-/* 2. 修复弹窗里的输入框 (登录框) */ 
-.modal-box input { 
-    width: 100% !important; /* 强制填满容器，不要溢出 */ 
-    box-sizing: border-box !important; /* 关键：内边距不算在宽度里 */ 
-    margin-bottom: 15px !important; 
-    background-color: #0f172a !important; /* 深黑底色 */ 
-    border: 1px solid #334155 !important; 
-    color: #fff !important; 
-    padding: 12px !important; 
-    border-radius: 8px !important; 
-    height: auto !important; 
-} 
-
-.modal-box label { 
-    display: block !important; 
-    text-align: left !important; 
-    margin-bottom: 6px !important; 
-    color: #94a3b8 !important; 
-    font-size: 0.9rem !important; 
-} 
-
-/* 3. 修复确认弹窗那条奇怪的黑色横杠 */ 
-.modal-content { 
-    background: transparent !important; /* 去掉背景色 */ 
-    border: none !important;            /* 去掉边框 */ 
-    padding: 0 !important; 
-    margin: 15px 0 25px 0 !important; 
-    color: #cbd5e1 !important; 
-    font-size: 1rem !important; 
-    line-height: 1.6 !important; 
-    width: 100% !important; 
-    text-align: center !important; 
-} 
-
-/* 4. 标题修复 */ 
-.modal-title { 
-    font-size: 1.25rem !important; 
-    margin-bottom: 20px !important; 
-    color: #fff !important; 
-    font-weight: 600 !important; 
-} 
-
-/* 5. 按钮组布局 */ 
-.modal-actions { 
-    display: flex !important; 
-    justify-content: center !important; 
-    gap: 15px !important; 
-    margin-top: 20px !important; 
-    width: 100% !important; 
-} 
-
-.modal-btn { 
-    min-width: 100px !important; /* 按钮不要太窄 */ 
-}
-
-/* ============================================== 
-   🚀 弹窗样式强制修复补丁 (Modal Fix Patch) 
-   ============================================== */ 
-
-/* 1. 弹窗容器：修复宽度过窄、背景不统一的问题 */ 
-body .modal-box { 
-    background-color: #151a23 !important; /* 强制深蓝黑背景 */ 
-    border: 1px solid #334155 !important; /* 边框 */ 
-    border-radius: 12px !important; 
-    padding: 32px !important; 
-    
-    /* 尺寸控制 */ 
     width: 90% !important; 
     max-width: 400px !important; 
-    min-width: 320px !important; 
-    height: auto !important; /* 高度自适应，决不能定死 */ 
+    height: auto !important;     /* 关键：高度随内容自动撑开 */ 
+    min-height: 250px !important; 
+    max-height: 90vh !important; /* 防止超出屏幕 */ 
     
-    /* 布局 */ 
-    display: flex !important; 
-    flex-direction: column !important; 
-    align-items: center !important; /* 内容居中 */ 
-    box-shadow: 0 20px 60px rgba(0,0,0,0.6) !important; 
-} 
-
-/* 2. 标题：修复被遮挡、字号太小 */ 
-body .modal-title { 
-    font-size: 1.3rem !important; 
-    font-weight: 700 !important; 
-    color: #ffffff !important; 
-    margin-top: 0 !important; 
-    margin-bottom: 20px !important; 
-    text-align: center !important; 
-    width: 100% !important; 
-} 
-
-/* 3. 内容文本：去除那个奇怪的黑色背景条 */ 
-body .modal-content { 
-    background: transparent !important; /* 关键：去掉背景色 */ 
-    border: none !important; 
-    color: #cbd5e1 !important; /* 浅灰字体 */ 
-    font-size: 1rem !important; 
-    line-height: 1.6 !important; 
-    margin: 0 0 24px 0 !important; 
-    padding: 0 !important; 
-    text-align: center !important; 
-    width: 100% !important; 
-} 
-
-/* 4. 输入框 (针对登录弹窗)：修复溢出、样式丑陋 */ 
-body .modal-box input { 
-    width: 100% !important; /* 占满一行 */ 
-    box-sizing: border-box !important; /* 关键：含边框宽度 */ 
-    background-color: #0f1218 !important; /* 深黑底 */ 
-    border: 1px solid #2d3748 !important; 
-    color: #fff !important; 
-    padding: 12px 16px !important; 
-    border-radius: 8px !important; 
-    font-size: 1rem !important; 
-    margin-bottom: 16px !important; /* 底部留空 */ 
-    margin-top: 5px !important; 
-    height: auto !important; 
-    outline: none !important; 
-} 
-
-body .modal-box input:focus { 
-    border-color: #3b82f6 !important; /* 聚焦变蓝 */ 
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2) !important; 
-} 
-
-/* 5. 标签 (账号/密码文字) */ 
-body .modal-box label { 
-    display: block !important; 
-    width: 100% !important; 
-    text-align: left !important; 
-    color: #94a3b8 !important; 
-    font-size: 0.9rem !important; 
-    margin-bottom: 4px !important; 
-} 
-
-/* 6. 按钮组：修复按钮挤在一起 */ 
-body .modal-actions { 
-    display: flex !important; 
-    justify-content: center !important; 
-    gap: 16px !important; /* 按钮间距 */ 
-    width: 100% !important; 
-    margin-top: 10px !important; 
-} 
-
-body .modal-btn { 
-    padding: 10px 24px !important; 
-    font-size: 0.95rem !important; 
-    border-radius: 6px !important; 
-    cursor: pointer !important; 
-    min-width: 100px !important; 
-} 
-
-/* 取消按钮 */ 
-body .btn-cancel { 
-    background: transparent !important; 
-    border: 1px solid #475569 !important; 
-    color: #cbd5e1 !important; 
-} 
-body .btn-cancel:hover { 
-    border-color: #cbd5e1 !important; 
-    color: #fff !important; 
-} 
-
-/* 确定按钮 */ 
-body .btn-confirm { 
-    background: #3b82f6 !important; /* 亮蓝 */ 
-    border: none !important; 
-    color: white !important; 
-} 
-body .btn-confirm:hover { 
-    background: #2563eb !important; 
-}
-
-/* ============================================== 
-   ☢️ 弹窗样式核弹级修复 (Nuclear Fix Patch) 
-   ============================================== */ 
-
-/* 0. 权重碾压：使用 ID 选择器覆盖一切 */
-#customModal .modal-box {
-    /* 布局与尺寸 */
-    display: flex !important;
-    flex-direction: column !important;
-    width: 90% !important;
-    max-width: 400px !important;
-    min-width: 320px !important;
-    height: auto !important;
-    padding: 32px !important;
+    background-color: #151a23 !important; 
+    border: 1px solid #334155 !important; 
+    border-radius: 16px !important; 
+    padding: 30px !important; 
     
-    /* 视觉风格 */
-    background-color: #0f1115 !important; /* 极深色背景，解决透视问题 */
-    border: 1px solid #2d3748 !important;
-    border-radius: 16px !important;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7) !important;
-    
-    /* 文本对齐 */
-    text-align: center !important;
-    color: #ffffff !important;
-}
+    position: relative !important; /*以此为基准 */ 
+    overflow-y: auto !important;   /* 内容太多时允许滚动 */ 
+} 
 
-/* 1. 强制元素顺序 (Flex Order) - 解决顺序错乱 */
-#customModal .modal-title {
-    order: 1 !important; /* 标题永远在第一位 */
-    margin: 0 0 24px 0 !important;
-    font-size: 1.5rem !important;
-    font-weight: 700 !important;
-    color: #fff !important;
-    line-height: 1.2 !important;
-    width: 100% !important;
-}
-
+/* 2. 强制内容区域：占据独立空间 */
 #customModal .modal-content {
-    order: 2 !important; /* 内容在中间 */
-    margin: 0 0 32px 0 !important;
+    flex-grow: 1 !important; /* 占据剩余空间 */
     width: 100% !important;
+    margin-bottom: 20px !important; /* 给下方按钮留出距离 */
+    
+    text-align: center !important; /* 修复拉黑弹窗文字偏左 */
+    padding: 0 10px !important;
+    
     background: transparent !important;
     border: none !important;
-    padding: 0 !important;
     color: #cbd5e1 !important;
-    font-size: 1rem !important;
-    line-height: 1.6 !important;
 }
 
-#customModal .modal-actions {
-    order: 3 !important; /* 按钮在最后 */
-    margin-top: auto !important;
+/* 3. 强制输入框：块级显示，拒绝并排 */
+#customModal input {
+    display: block !important; 
     width: 100% !important;
-    display: flex !important;
-    justify-content: center !important;
-    gap: 16px !important;
-}
-
-/* 2. 输入框深度修复 - 覆盖内联样式 */
-#customModal .modal-box input, 
-#customModal .modal-box input[style] { /* 针对性覆盖 style 属性 */
-    display: block !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-    height: 48px !important; /* 固定高度，防止过高 */
-    padding: 0 16px !important;
-    margin-bottom: 16px !important;
+    margin-bottom: 15px !important; /* 输入框之间、输入框与按钮之间的间距 */
+    box-sizing: border-box !important; /* 防止 padding 撑大宽度 */
+    height: 44px !important;
     
-    background-color: #1a202c !important;
-    border: 1px solid #4a5568 !important;
-    border-radius: 8px !important;
+    background-color: #0f1218 !important;
+    border: 1px solid #2d3748 !important;
     color: #fff !important;
-    font-size: 1rem !important;
-    line-height: normal !important;
-    outline: none !important;
-    box-shadow: none !important;
+    padding: 0 15px !important;
+    border-radius: 8px !important;
 }
 
-#customModal .modal-box input:focus {
-    border-color: #3b82f6 !important;
-    background-color: #1a202c !important;
-}
+/* 4. 强制按钮容器：取消绝对定位，回归文档流 */ 
+#customModal .modal-actions { 
+    position: static !important; /* 关键！防止按钮吸在底部挡住输入框 */ 
+    margin-top: 0 !important; 
+    padding-top: 10px !important; 
+    width: 100% !important; 
+    
+    display: flex !important; 
+    justify-content: center !important; 
+    gap: 15px !important; 
+    flex-shrink: 0 !important; /* 防止被压缩 */ 
+} 
 
-/* 3. 标签修复 */
-#customModal .modal-box label {
-    display: block !important;
-    text-align: left !important;
-    color: #a0aec0 !important;
-    font-size: 0.875rem !important;
-    margin-bottom: 8px !important;
-    font-weight: 500 !important;
-}
-
-/* 4. 按钮修复 */
+/* 5. 强制按钮样式：统一美观 */
 #customModal .modal-btn {
+    flex: 1 !important; /* 按钮平分宽度 */
+    max-width: 120px !important; /* 但别太宽 */
+    margin: 0 !important;
     height: 40px !important;
-    padding: 0 24px !important;
-    font-size: 0.95rem !important;
     border-radius: 6px !important;
-    display: inline-flex !important;
+    cursor: pointer !important;
+    display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    min-width: 100px !important;
+    font-size: 14px !important;
 }
 
-#customModal .btn-cancel {
-    background: transparent !important;
-    border: 1px solid #4a5568 !important;
-    color: #cbd5e1 !important;
-}
-
-#customModal .btn-confirm {
-    background: #3b82f6 !important;
-    border: none !important;
-    color: white !important;
-}
-
-/* 5. 解决可能的内联容器干扰 */
-#customModal .modal-content > div {
-    width: 100% !important;
-    text-align: left !important; /* 确保表单左对齐 */
-}
-
-/* ==================== 
-   弹窗布局终极修正 
-   ==================== */ 
-
-/* 1. 确保弹窗是垂直排列的 */ 
-body .modal-box { 
-    display: flex !important; 
-    flex-direction: column !important; /* 从上到下排列 */ 
-    justify-content: center !important; 
-    height: auto !important; /* 高度随内容自动撑开 */ 
-    min-height: 200px !important; 
-    overflow: visible !important; /* 允许阴影显示 */ 
+#customModal .btn-confirm { 
+    background-color: #3b82f6 !important; 
+    color: white !important; 
+    border: none !important; 
 } 
-
-/* 2. 确保内容容器也是垂直排列的 */ 
-body .modal-content { 
-    display: flex !important; 
-    flex-direction: column !important; 
-    gap: 15px !important; /* 元素之间的间距 */ 
-    width: 100% !important; 
-    margin-bottom: 20px !important; 
-} 
-
-/* 3. 强制限制输入框高度和外边距，防止太巨大 */ 
-body .modal-box input { 
-    height: 44px !important; /* 固定高度，别太高 */ 
-    margin: 0 !important;    /* 去掉多余外边距，由 gap 控制 */ 
-    width: 100% !important; 
-    font-size: 14px !important; 
-    z-index: 10 !important;  /* 保证在最上层，可点击 */ 
-    position: relative !important; /* 防止 absolute 定位乱跑 */ 
-} 
-
-/* 4. 按钮层级提高，防止被遮挡 */ 
-body .modal-actions { 
-    position: relative !important; 
-    z-index: 20 !important; 
-    margin-top: 10px !important; 
-}
-
-/* ==================== 
-   弹窗 UI 最终微调 (Final Polish) 
-   ==================== */ 
-
-/* 1. 修复按钮重叠：给输入框下方增加强制间距 */ 
-body .modal-box input { 
-    margin-bottom: 24px !important; /* 增加到底部的距离 */ 
-} 
-
-/* 2. 确保按钮容器是独立的块级元素，且居中 */ 
-body .modal-actions { 
-    margin-top: 10px !important; 
-    position: static !important; /* 取消任何可能的绝对定位 */ 
-    width: 100% !important; 
-    display: flex !important; 
-    justify-content: center !important; 
-    padding-bottom: 5px !important; 
-} 
-
-/* 3. 登录弹窗专用优化：让标签文字更好看 */ 
-body .modal-box label { 
-    margin-bottom: 8px !important; 
-    font-size: 0.85rem !important; 
+#customModal .btn-cancel { 
+    background-color: transparent !important; 
+    border: 1px solid #475569 !important; 
     color: #94a3b8 !important; 
-    padding-left: 2px !important; /* 稍微缩进对齐 */ 
+}
+
+/* ==================== 
+   JS 动态内容的样式补充 
+   ==================== */ 
+
+/* 登录表单容器 */ 
+.login-form-container { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 15px; 
+    width: 100%; 
 } 
 
-/* 4. 修复拉黑弹窗文字居中问题 */ 
-body .modal-content { 
-    text-align: center !important; 
-    line-height: 1.6 !important; 
-    padding: 0 10px !important; /* 防止文字贴边 */ 
+/* 输入框通用样式 */ 
+.modal-input { 
+    width: 100%; 
+    height: 44px; 
+    padding: 10px; 
+    background: #0f1218; 
+    border: 1px solid #2d3748; 
+    border-radius: 8px; 
+    color: white; 
+    box-sizing: border-box; /* 必须有 */ 
+    outline: none; 
+    display: block; /* 独占一行 */ 
+} 
+.modal-input:focus { 
+    border-color: #3b82f6; 
 } 
 
-/* 5. 按钮微调：让它看起来更像按钮，而不是方块 */ 
-body .modal-btn { 
-    min-width: 110px !important; 
-    height: 40px !important; /* 固定高度 */ 
-    display: flex !important; 
-    align-items: center !important; 
-    justify-content: center !important; 
-    font-weight: 500 !important; 
-    letter-spacing: 0.5px !important; 
+/* 标签样式 */ 
+.form-group label { 
+    display: block; 
+    margin-bottom: 5px; 
+    color: #94a3b8; 
+    font-size: 0.9rem; 
+    text-align: left; 
+} 
+
+/* 错误信息 */ 
+.error-msg { 
+    color: #ef4444; 
+    font-size: 0.85rem; 
+    min-height: 10px; 
 }
