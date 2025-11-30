@@ -772,3 +772,43 @@ body .btn-confirm:hover {
     width: 100% !important;
     text-align: left !important; /* 确保表单左对齐 */
 }
+
+/* ==================== 
+   弹窗布局终极修正 
+   ==================== */ 
+
+/* 1. 确保弹窗是垂直排列的 */ 
+body .modal-box { 
+    display: flex !important; 
+    flex-direction: column !important; /* 从上到下排列 */ 
+    justify-content: center !important; 
+    height: auto !important; /* 高度随内容自动撑开 */ 
+    min-height: 200px !important; 
+    overflow: visible !important; /* 允许阴影显示 */ 
+} 
+
+/* 2. 确保内容容器也是垂直排列的 */ 
+body .modal-content { 
+    display: flex !important; 
+    flex-direction: column !important; 
+    gap: 15px !important; /* 元素之间的间距 */ 
+    width: 100% !important; 
+    margin-bottom: 20px !important; 
+} 
+
+/* 3. 强制限制输入框高度和外边距，防止太巨大 */ 
+body .modal-box input { 
+    height: 44px !important; /* 固定高度，别太高 */ 
+    margin: 0 !important;    /* 去掉多余外边距，由 gap 控制 */ 
+    width: 100% !important; 
+    font-size: 14px !important; 
+    z-index: 10 !important;  /* 保证在最上层，可点击 */ 
+    position: relative !important; /* 防止 absolute 定位乱跑 */ 
+} 
+
+/* 4. 按钮层级提高，防止被遮挡 */ 
+body .modal-actions { 
+    position: relative !important; 
+    z-index: 20 !important; 
+    margin-top: 10px !important; 
+}
