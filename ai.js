@@ -884,12 +884,28 @@
           <input type="text" class="clean-input" value="${cat.id}" disabled>
         </div>
         <div class="error-text">删除后相关项目将移至“其他”。</div>
+        <div id="delErr" class="error-text"></div>
       </div>
     `;
     window.showModal('删除分类', html, async () => {
       if (cat.id==='qita'){ window.showModal('提示','“其他”不可删除'); return; }
       const r = await window.api(`/api/categories?id=${encodeURIComponent(cat.id)}`,'DELETE');
-      if (!r.ok){ window.showModal('删除失败', (r.body&&r.body.error)||'删除失败'); return; }
+      if (!r.ok){
+        const msg = (r.body && (r.body.error||r.body.message)) || String(r.body||'');
+        if (/not\s*found|不存在/i.test(msg)){
+          window.closeModal();
+          window.reports.forEach(x=>{ if (x.category===cat.id) x.category='qita'; });
+          await window.loadData();
+          window.currentCatFilter = 'ALL';
+          window.renderCategoryList();
+          window.renderTabs();
+          window.renderList();
+          return;
+        }
+        const errEl = document.getElementById('delErr');
+        if (errEl) errEl.textContent = msg || '删除失败';
+        return false;
+      }
       window.reports.forEach(x=>{ if (x.category===cat.id) x.category='qita'; });
       await window.loadData();
       window.currentCatFilter = 'ALL';

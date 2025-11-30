@@ -263,12 +263,25 @@ function deleteCategory(c){
         <input type="text" class="clean-input" value="${c.id}" disabled>
       </div>
       <div class="error-text">删除后其下报告将归入“其他”。</div>
+      <div id="delErr" class="error-text"></div>
     </div>
   `;
   showModal('删除分类', html, async () => {
     if(c.id==='qita'){ showModal('提示','“其他”不可删除'); return; }
     const rr = await api(`/api/categories?id=${encodeURIComponent(c.id)}`,'DELETE');
-    if (!rr.ok){ showModal('删除失败', (rr.body&&rr.body.error)||'删除失败'); return; }
+    if (!rr.ok){
+      const msg = (rr.body && (rr.body.error||rr.body.message)) || String(rr.body||'');
+      if (/not\s*found|不存在/i.test(msg)){
+        // 已被其他操作删除，视为成功并同步刷新
+        window.closeModal();
+        await loadCategories();
+        await loadReports();
+        return;
+      }
+      const errEl = document.getElementById('delErr');
+      if (errEl) errEl.textContent = msg || '删除失败';
+      return false;
+    }
     await loadCategories();
     await loadReports();
   });

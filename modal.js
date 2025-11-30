@@ -17,31 +17,35 @@ function initModal() {
         confirmBtn.onclick = async () => {
             if (confirmBtn.disabled) return;
             const originalText = confirmBtn.innerText;
-            let settled = false;
+            const usedCallback = currentConfirmCallback;
+            const usedTitle = modalTitle ? modalTitle.innerText : '';
+
             confirmBtn.disabled = true;
             confirmBtn.innerText = '处理中...';
             confirmBtn.dataset.loading = '1';
 
             try {
-                if (currentConfirmCallback) {
-                    const result = await currentConfirmCallback();
-                    if (result === false) {
-                        confirmBtn.disabled = false;
-                        confirmBtn.innerText = originalText;
-                        delete confirmBtn.dataset.loading;
-                        return;
-                    }
+                if (!usedCallback) {
+                    // 信息弹窗：直接关闭
+                    closeModal();
+                    return;
                 }
+                const result = await usedCallback();
+                if (result === false) {
+                    // 校验失败：保持弹窗开启并恢复按钮
+                    return;
+                }
+                // 成功：关闭弹窗
                 closeModal();
-                settled = true;
             } catch (e) {
-                confirmBtn.disabled = false;
-                confirmBtn.innerText = originalText;
-                delete confirmBtn.dataset.loading;
+                // 异常：保持弹窗开启，由回调内部自行提示
                 return;
             } finally {
+                // 仅当仍处于同一个弹窗上下文时才恢复文案
+                if (modalTitle && modalTitle.innerText === usedTitle && currentConfirmCallback === usedCallback) {
+                    confirmBtn.innerText = originalText;
+                }
                 confirmBtn.disabled = false;
-                confirmBtn.innerText = originalText;
                 delete confirmBtn.dataset.loading;
             }
         };
