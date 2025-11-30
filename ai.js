@@ -46,7 +46,7 @@
           version: 1, 
           created_at: it.created_at, 
           source: 'backend', 
-          content: (it.content || normalizeContent({})) 
+          content: normalizeContent(it.content || {}) 
         }]
       }));
 
@@ -158,9 +158,11 @@
     };
 
     lines.forEach(line => {
-      if (line.trim().startsWith('### ')) {
+      // Support ## or ###, with optional space
+      const match = line.trim().match(/^(#{2,3})\s*(.+)$/);
+      if (match) {
         flush();
-        currentTitle = line.trim().replace(/^###\s+/, '');
+        currentTitle = match[2].trim();
         currentContent = [];
       } else {
         currentContent.push(line);
