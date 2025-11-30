@@ -649,3 +649,126 @@ body .btn-confirm {
 body .btn-confirm:hover { 
     background: #2563eb !important; 
 }
+
+/* ============================================== 
+   ☢️ 弹窗样式核弹级修复 (Nuclear Fix Patch) 
+   ============================================== */ 
+
+/* 0. 权重碾压：使用 ID 选择器覆盖一切 */
+#customModal .modal-box {
+    /* 布局与尺寸 */
+    display: flex !important;
+    flex-direction: column !important;
+    width: 90% !important;
+    max-width: 400px !important;
+    min-width: 320px !important;
+    height: auto !important;
+    padding: 32px !important;
+    
+    /* 视觉风格 */
+    background-color: #0f1115 !important; /* 极深色背景，解决透视问题 */
+    border: 1px solid #2d3748 !important;
+    border-radius: 16px !important;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7) !important;
+    
+    /* 文本对齐 */
+    text-align: center !important;
+    color: #ffffff !important;
+}
+
+/* 1. 强制元素顺序 (Flex Order) - 解决顺序错乱 */
+#customModal .modal-title {
+    order: 1 !important; /* 标题永远在第一位 */
+    margin: 0 0 24px 0 !important;
+    font-size: 1.5rem !important;
+    font-weight: 700 !important;
+    color: #fff !important;
+    line-height: 1.2 !important;
+    width: 100% !important;
+}
+
+#customModal .modal-content {
+    order: 2 !important; /* 内容在中间 */
+    margin: 0 0 32px 0 !important;
+    width: 100% !important;
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    color: #cbd5e1 !important;
+    font-size: 1rem !important;
+    line-height: 1.6 !important;
+}
+
+#customModal .modal-actions {
+    order: 3 !important; /* 按钮在最后 */
+    margin-top: auto !important;
+    width: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+    gap: 16px !important;
+}
+
+/* 2. 输入框深度修复 - 覆盖内联样式 */
+#customModal .modal-box input, 
+#customModal .modal-box input[style] { /* 针对性覆盖 style 属性 */
+    display: block !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    height: 48px !important; /* 固定高度，防止过高 */
+    padding: 0 16px !important;
+    margin-bottom: 16px !important;
+    
+    background-color: #1a202c !important;
+    border: 1px solid #4a5568 !important;
+    border-radius: 8px !important;
+    color: #fff !important;
+    font-size: 1rem !important;
+    line-height: normal !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+#customModal .modal-box input:focus {
+    border-color: #3b82f6 !important;
+    background-color: #1a202c !important;
+}
+
+/* 3. 标签修复 */
+#customModal .modal-box label {
+    display: block !important;
+    text-align: left !important;
+    color: #a0aec0 !important;
+    font-size: 0.875rem !important;
+    margin-bottom: 8px !important;
+    font-weight: 500 !important;
+}
+
+/* 4. 按钮修复 */
+#customModal .modal-btn {
+    height: 40px !important;
+    padding: 0 24px !important;
+    font-size: 0.95rem !important;
+    border-radius: 6px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-width: 100px !important;
+}
+
+#customModal .btn-cancel {
+    background: transparent !important;
+    border: 1px solid #4a5568 !important;
+    color: #cbd5e1 !important;
+}
+
+#customModal .btn-confirm {
+    background: #3b82f6 !important;
+    border: none !important;
+    color: white !important;
+}
+
+/* 5. 解决可能的内联容器干扰 */
+#customModal .modal-content > div {
+    width: 100% !important;
+    text-align: left !important; /* 确保表单左对齐 */
+}
