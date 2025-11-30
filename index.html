@@ -47,7 +47,7 @@
     @media (max-width:768px){.hero h1{font-size:2rem}.hero p{font-size:1rem}.tools-grid{grid-template-columns:1fr}.nav-content{flex-direction:column;gap:1rem}.nav-actions{flex-wrap:wrap;justify-content:center}}
   </style>
   <style> 
-    /* 1. 弹窗大盒子：垂直排列，高度自适应 */ 
+    /* 1. 弹窗大盒子：垂直排列，高度自适应 - 融入艺术风格 */ 
     #customModal .modal-box { 
         display: flex !important; 
         flex-direction: column !important; 
@@ -56,50 +56,61 @@
         
         width: 90% !important; 
         max-width: 400px !important; 
-        height: auto !important; /* 让内容撑开高度 */ 
+        height: auto !important; 
         padding: 30px !important; 
         
-        background-color: #151a23 !important; 
-        border: 1px solid #334155 !important; 
+        /* Art Style Integration */
+        background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%) !important; 
+        border: 1px solid #404040 !important; 
         border-radius: 12px !important; 
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+        color: #f0f0f0 !important;
     } 
 
-    /* 2. 内容区域：给下方留出空间 */ 
+    /* 2. 内容区域 */ 
     #customModal .modal-content { 
         display: block !important; 
         width: 100% !important; 
-        margin-bottom: 25px !important; /* 推开底部的按钮 */ 
+        margin-bottom: 25px !important; 
         background: transparent !important; 
         padding: 0 !important; 
     } 
 
-    /* 3. JS生成的表单容器 */ 
+    /* 3. 表单容器 */ 
     .login-form-container { 
         display: flex !important; 
         flex-direction: column !important; 
-        gap: 20px !important; /* 输入框之间的间距 */ 
+        gap: 20px !important; 
         width: 100% !important; 
     } 
 
-    /* 4. 输入框：强制修复高度和边框模型 */ 
+    /* 4. 输入框 - 艺术风格 */ 
     .modal-input { 
         display: block !important; 
         width: 100% !important; 
         height: 44px !important; 
-        box-sizing: border-box !important; /* 关键！防止撑破 */ 
+        box-sizing: border-box !important; 
         
-        background: #0f1218 !important; 
-        border: 1px solid #2d3748 !important; 
+        /* Art Style Input */
+        background: rgba(255, 255, 255, 0.1) !important; 
+        border: 1px solid #555 !important; 
+        border-radius: 6px !important; 
         color: white !important; 
         padding: 0 12px !important; 
-        border-radius: 8px !important; 
-        margin: 0 !important; /* 间距由 gap 控制 */ 
+        margin: 0 !important; 
+        transition: all 0.3s ease !important;
     } 
     .modal-input:focus { 
-        border-color: #3b82f6 !important; 
+        border-color: #8b7355 !important; /* 金色系 */
+        box-shadow: 0 0 0 2px rgba(139, 115, 85, 0.2) !important;
+        outline: none !important;
     } 
+    /* Placeholder color adjustment */
+    .modal-input::placeholder {
+        color: rgba(255, 255, 255, 0.4) !important;
+    }
 
-    /* 5. 按钮区域：强制归位 */ 
+    /* 5. 按钮区域 */ 
     #customModal .modal-actions { 
         display: flex !important; 
         justify-content: center !important; 
@@ -107,7 +118,7 @@
         margin-top: 0 !important; 
         padding-top: 10px !important; 
         
-        position: static !important; /* 严禁绝对定位 */ 
+        position: static !important; 
         width: 100% !important; 
     } 
     
