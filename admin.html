@@ -47,11 +47,21 @@
   </nav>
   <main class="admin-container">
     <section class="admin-card">
+      <div class="section-title">待审核用户</div>
+      <div style="overflow-x: auto;">
+        <table>
+          <thead><tr><th>用户名</th><th>申请时间</th><th>操作</th></tr></thead>
+          <tbody id="pending-list"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="admin-card">
       <div class="section-title">已注册用户管理</div>
       <div style="overflow-x: auto;">
         <table>
           <thead><tr><th>用户名</th><th>状态</th><th>创建时间</th><th>操作</th></tr></thead>
-          <tbody id="usersTbody"></tbody>
+          <tbody id="member-list"></tbody>
         </table>
       </div>
       <div id="usersMsg" class="help" style="padding: 20px; text-align: center; color: var(--muted);"></div>
@@ -60,6 +70,7 @@
   <footer class="site-footer">
     <small>仅管理员可访问；所有操作将记录于数据库。</small>
   </footer>
-  <script src="admin.js?v=3"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="admin.js?v=4"></script>
 </body>
 </html>

@@ -144,6 +144,12 @@ class Handler(SimpleHTTPRequestHandler):
       self.end_headers()
       self.wfile.write(data)
       return
+    if self.path == '/api/config':
+      self._send_json({
+        "url": os.environ.get("SUPABASE_URL"),
+        "anon": os.environ.get("SUPABASE_ANON_KEY")
+      })
+      return
     if self.path.startswith('/api/visit'):
       qs = parse_qs(urlparse(self.path).query)
       peek = 'peek' in qs
