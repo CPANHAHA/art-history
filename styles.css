@@ -380,3 +380,155 @@ button.logout-btn:hover{background-color:var(--danger-color);color:#fff;border-c
 .btn-confirm:hover { 
     filter: brightness(1.1); 
 }
+
+/* ==================== 
+   弹窗样式终极修复 (FIX) 
+   ==================== */ 
+
+/* 1. 修复弹窗主体：增加宽度，加深背景 */ 
+.modal-box { 
+    background-color: #1e293b !important; /* 强制深色不透明背景 */ 
+    border: 1px solid #334155 !important; 
+    border-radius: 16px !important; 
+    padding: 30px !important; 
+    
+    /* 修复宽度问题 */ 
+    width: auto !important; 
+    min-width: 320px !important; 
+    max-width: 420px !important; 
+    
+    /* 修复文字颜色 */ 
+    color: #fff !important; 
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5) !important; 
+} 
+
+/* 2. 修复弹窗里的输入框 (登录框) */ 
+.modal-box input { 
+    width: 100% !important; /* 强制填满容器，不要溢出 */ 
+    box-sizing: border-box !important; /* 关键：内边距不算在宽度里 */ 
+    margin-bottom: 15px !important; 
+    background-color: #0f172a !important; /* 深黑底色 */ 
+    border: 1px solid #334155 !important; 
+    color: #fff !important; 
+    padding: 12px !important; 
+    border-radius: 8px !important; 
+    height: auto !important; 
+} 
+
+.modal-box label { 
+    display: block !important; 
+    text-align: left !important; 
+    margin-bottom: 6px !important; 
+    color: #94a3b8 !important; 
+    font-size: 0.9rem !important; 
+} 
+
+/* 3. 修复确认弹窗那条奇怪的黑色横杠 */ 
+.modal-content { 
+    background: transparent !important; /* 去掉背景色 */ 
+    border: none !important;            /* 去掉边框 */ 
+    padding: 0 !important; 
+    margin: 15px 0 25px 0 !important; 
+    color: #cbd5e1 !important; 
+    font-size: 1rem !important; 
+    line-height: 1.6 !important; 
+    width: 100% !important; 
+    text-align: center !important; 
+} 
+
+/* 4. 标题修复 */ 
+.modal-title { 
+    font-size: 1.25rem !important; 
+    margin-bottom: 20px !important; 
+    color: #fff !important; 
+    font-weight: 600 !important; 
+} 
+
+/* 5. 按钮组布局 */ 
+.modal-actions { 
+    display: flex !important; 
+    justify-content: center !important; 
+    gap: 15px !important; 
+    margin-top: 20px !important; 
+    width: 100% !important; 
+} 
+
+.modal-btn { 
+    min-width: 100px !important; /* 按钮不要太窄 */ 
+}
+
+/* ==================== 
+   弹窗样式终极修复 (FIX) 
+   ==================== */ 
+
+/* 1. 修复弹窗主体：增加宽度，加深背景 */ 
+.modal-box { 
+    background-color: #1e293b !important; /* 强制深色不透明背景 */ 
+    border: 1px solid #334155 !important; 
+    border-radius: 16px !important; 
+    padding: 30px !important; 
+    
+    /* 修复宽度问题 */ 
+    width: auto !important; 
+    min-width: 320px !important; 
+    max-width: 420px !important; 
+    
+    /* 修复文字颜色 */ 
+    color: #fff !important; 
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5) !important; 
+} 
+
+/* 2. 修复弹窗里的输入框 (登录框) */ 
+.modal-box input { 
+    width: 100% !important; /* 强制填满容器，不要溢出 */ 
+    box-sizing: border-box !important; /* 关键：内边距不算在宽度里 */ 
+    margin-bottom: 15px !important; 
+    background-color: #0f172a !important; /* 深黑底色 */ 
+    border: 1px solid #334155 !important; 
+    color: #fff !important; 
+    padding: 12px !important; 
+    border-radius: 8px !important; 
+    height: auto !important; 
+} 
+
+.modal-box label { 
+    display: block !important; 
+    text-align: left !important; 
+    margin-bottom: 6px !important; 
+    color: #94a3b8 !important; 
+    font-size: 0.9rem !important; 
+} 
+
+/* 3. 修复确认弹窗那条奇怪的黑色横杠 */ 
+.modal-content { 
+    background: transparent !important; /* 去掉背景色 */ 
+    border: none !important;            /* 去掉边框 */ 
+    padding: 0 !important; 
+    margin: 15px 0 25px 0 !important; 
+    color: #cbd5e1 !important; 
+    font-size: 1rem !important; 
+    line-height: 1.6 !important; 
+    width: 100% !important; 
+    text-align: center !important; 
+} 
+
+/* 4. 标题修复 */ 
+.modal-title { 
+    font-size: 1.25rem !important; 
+    margin-bottom: 20px !important; 
+    color: #fff !important; 
+    font-weight: 600 !important; 
+} 
+
+/* 5. 按钮组布局 */ 
+.modal-actions { 
+    display: flex !important; 
+    justify-content: center !important; 
+    gap: 15px !important; 
+    margin-top: 20px !important; 
+    width: 100% !important; 
+} 
+
+.modal-btn { 
+    min-width: 100px !important; /* 按钮不要太窄 */ 
+}
