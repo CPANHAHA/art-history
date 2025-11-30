@@ -4,37 +4,33 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>管理后台 · Web3大航海</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="/styles.css">
   <style>
-    /* Override or supplement styles.css if necessary, but try to use shared variables */
-    body { 
-      background-color: var(--bg); 
-      color: var(--text);
-    }
-    .container { max-width: 980px; margin: 0 auto; padding: 40px 20px; }
-    .card { 
+    /* Admin specific overrides */
+    .admin-container { max-width: 1000px; margin: 0 auto; padding: 40px 20px; }
+    .admin-card { 
       background-color: var(--card); 
       border: 1px solid var(--border); 
-      border-radius: 8px; 
+      border-radius: 12px; 
       padding: 24px; 
       margin: 20px 0; 
       box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
     }
-    .section-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 20px; color: var(--text); }
+    .section-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 24px; color: var(--text); border-left: 4px solid var(--accent); padding-left: 12px; }
     
     table { width: 100%; border-collapse: collapse; margin-top: 10px; }
     th, td { padding: 16px; text-align: left; border-bottom: 1px solid var(--border); }
-    th { color: var(--muted); font-size: 0.85rem; text-transform: uppercase; font-weight: 600; }
+    th { color: var(--muted); font-size: 0.85rem; text-transform: uppercase; font-weight: 600; background: rgba(255,255,255,0.02); }
     tr:hover { background-color: rgba(255,255,255,0.03); }
     
-    .status-badge { padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; }
+    .status-badge { padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; display: inline-block;}
     .status-admin { background-color: rgba(139, 92, 246, 0.2); color: #a78bfa; border: 1px solid rgba(139, 92, 246, 0.3); }
     .status-member { background-color: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
     .status-blacklisted { background-color: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
     .status-pending { background-color: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
     
-    button.status-badge { transition: all 0.2s; }
-    button.status-badge:hover { opacity: 0.8; transform: scale(1.05); }
+    button.status-badge { transition: all 0.2s; cursor: pointer; }
+    button.status-badge:hover { opacity: 0.8; transform: translateY(-1px); }
   </style>
 </head>
 <body>
@@ -49,14 +45,16 @@
       <button id="logoutBtn" class="nav-item logout-btn">退出登录</button>
     </div>
   </nav>
-  <main class="container">
-    <section class="card">
+  <main class="admin-container">
+    <section class="admin-card">
       <div class="section-title">已注册用户管理</div>
-      <table>
-        <thead><tr><th>用户名</th><th>状态</th><th>创建时间</th><th>操作</th></tr></thead>
-        <tbody id="usersTbody"></tbody>
-      </table>
-      <div id="usersMsg" class="help"></div>
+      <div style="overflow-x: auto;">
+        <table>
+          <thead><tr><th>用户名</th><th>状态</th><th>创建时间</th><th>操作</th></tr></thead>
+          <tbody id="usersTbody"></tbody>
+        </table>
+      </div>
+      <div id="usersMsg" class="help" style="padding: 20px; text-align: center; color: var(--muted);"></div>
     </section>
   </main>
   <footer class="site-footer">

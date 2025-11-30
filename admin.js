@@ -27,7 +27,11 @@ async function loadUsers(){
   tbody.innerHTML=''; msg.textContent='加载中...';
   
   const r = await api('/api/admin/users');
-  if (!r.ok){ msg.textContent='加载失败'; return; }
+  if (!r.ok){ 
+    console.error('Load users failed:', r);
+    msg.innerHTML = '加载失败<br><small style="opacity:0.7">' + (typeof r.body === 'string' ? r.body.substring(0, 100) : 'Server Error') + '</small>'; 
+    return; 
+  }
   msg.textContent = '';
   
   const items = (r.body && r.body.items) || [];

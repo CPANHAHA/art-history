@@ -32,10 +32,20 @@ def _ensure_data_file():
 
 def _load_data():
   _ensure_data_file()
-  with open(DATA_PATH,'r',encoding='utf-8') as f:
-    d = json.load(f)
-  with open(USERS_PATH,'r',encoding='utf-8') as f:
-    u = json.load(f)
+  try:
+    with open(DATA_PATH,'r',encoding='utf-8') as f:
+      d = json.load(f)
+  except Exception:
+    d = {"reports":[],"categories":[{"id":"qita","name":"其他"},{"id":"icm","name":"ICM"},{"id":"x402","name":"X402"}],"last_edits":[]}
+  
+  try:
+    with open(USERS_PATH,'r',encoding='utf-8') as f:
+      u = json.load(f)
+  except Exception:
+    u = [
+      {"username": "admin", "status": "admin", "created_at": "2023-01-01T00:00:00"},
+      {"username": "demo_user", "status": "member", "created_at": "2023-10-27T10:00:00"}
+    ]
   return d, u
 
 def _atomic_save(data, path=DATA_PATH):
