@@ -100,11 +100,78 @@
     function navigateToTool(p){ if (!currentUser){ showMessage('请先登录并成为会员','error'); showLoginModal(); return; } if (currentUser.status==='pending'){ showMessage('您的会员申请正在审核中，请耐心等待','warning'); return; } if (currentUser.status==='blacklisted'){ showMessage('您的账号已被加入黑名单','error'); return; } if (currentUser.status==='member' || currentUser.status==='admin'){ location.href='/' + p; } }
     function showMessage(msg,type){ const c=document.getElementById('messageContainer'); const el=document.createElement('div'); el.className='message message-'+type; el.textContent=msg; c.appendChild(el); setTimeout(()=>{ el.remove(); },5000); }
     function logout(){ fetch('/api/logout',{method:'POST'}).then(()=>{ currentUser=null; renderNavigation(); renderHeroSection(); showMessage('已成功退出登录','success'); }); }
-    function showLoginModal(){ const u=prompt('请输入账号:'); if (!u) return; const p=prompt('请输入密码:'); if (!p) return; login(u,p); }
-    function showRegisterModal(){ const u=prompt('请输入账号 (6-8位字母或数字):'); if (!u) return; if (!/^[a-zA-Z0-9]{6,8}$/.test(u)){ alert('账号必须是6-8位字母或数字'); return; } const p=prompt('请输入密码 (8位):'); if (!p) return; if (p.length!==8){ alert('密码必须是8位'); return; } register(u,p); }
-    async function login(username,password){ try{ const r=await fetch('/api/login',{ method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({username,password}) }); const d=await r.json(); if (r.ok){ await checkAuthStatus(); renderNavigation(); renderHeroSection(); showMessage('登录成功','success'); } else { showMessage(d.error||'登录失败','error'); } } catch(e){ showMessage('登录失败，请稍后重试','error'); } }
-    async function register(username,password){ try{ const r=await fetch('/api/register',{ method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({username,password}) }); const d=await r.json(); if (r.ok){ showMessage('注册成功，请等待管理员审核','success'); } else { showMessage(d.error||'注册失败','error'); } } catch(e){ showMessage('注册失败，请稍后重试','error'); } }
+    function showLoginModal(){
+      const html = `
+        <div style="text-align:left">
+          <div style="margin-bottom:16px">
+            <label style="display:block;color:var(--text-muted);font-size:12px;margin-bottom:6px">账号</label>
+            <input id="loginUser" class="input" style="width:100%;padding:10px;background:#0f1218" placeholder="请输入账号">
+          </div>
+          <div>
+            <label style="display:block;color:var(--text-muted);font-size:12px;margin-bottom:6px">密码</label>
+            <input id="loginPass" type="password" class="input" style="width:100%;padding:10px;background:#0f1218" placeholder="请输入密码">
+          </div>
+          <div id="loginError" class="error" style="font-size:13px;margin-top:10px;min-height:20px"></div>
+        </div>
+      `;
+      showModal('登录', html, () => {
+        const u = document.getElementById('loginUser').value;
+        const p = document.getElementById('loginPass').value;
+        const err = document.getElementById('loginError');
+        if (!u || !p) { err.textContent = '请输入账号和密码'; return false; }
+        err.textContent = '登录中...';
+        login(u,p).then(ok => {
+             if(!ok) err.textContent = '登录失败'; // If login function returns false? login() is async and handles its own UI.
+             // My login function calls showModal on error, which overwrites the form.
+             // I should modify login() to NOT call showModal on error if called from here?
+             // Or just let it overwrite. Overwriting with error message is acceptable.
+             // But wait, login() implementation:
+             // else { showModal('登录失败', d.error||'登录失败'); }
+             // This will replace the form with error modal. That's fine.
+        });
+      });
+    }
+    function showRegisterModal(){
+      const html = `
+        <div style="text-align:left">
+          <div style="margin-bottom:16px">
+            <label style="display:block;color:var(--text-muted);font-size:12px;margin-bottom:6px">账号 (6-8位字母或数字)</label>
+            <input id="regUser" class="input" style="width:100%;padding:10px;background:#0f1218" placeholder="请输入账号">
+          </div>
+          <div>
+            <label style="display:block;color:var(--text-muted);font-size:12px;margin-bottom:6px">密码 (8位)</label>
+            <input id="regPass" type="password" class="input" style="width:100%;padding:10px;background:#0f1218" placeholder="请输入密码">
+          </div>
+          <div id="regError" class="error" style="font-size:13px;margin-top:10px;min-height:20px"></div>
+        </div>
+      `;
+      showModal('申请会员', html, () => {
+        const u = document.getElementById('regUser').value;
+        const p = document.getElementById('regPass').value;
+        const err = document.getElementById('regError');
+        if (!u) { err.textContent = '请输入账号'; return false; }
+        if (!/^[a-zA-Z0-9]{6,8}$/.test(u)){ err.textContent = '账号必须是6-8位字母或数字'; return false; }
+        if (!p) { err.textContent = '请输入密码'; return false; }
+        if (p.length!==8){ err.textContent = '密码必须是8位'; return false; }
+        register(u,p);
+      });
+    }
+    async function login(username,password){ try{ const r=await fetch('/api/login',{ method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({username,password}) }); const d=await r.json(); if (r.ok){ await checkAuthStatus(); renderNavigation(); renderHeroSection(); showMessage('登录成功','success'); } else { showModal('登录失败', d.error||'登录失败'); } } catch(e){ showModal('错误', '登录失败，请稍后重试'); } }
+    async function register(username,password){ try{ const r=await fetch('/api/register',{ method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({username,password}) }); const d=await r.json(); if (r.ok){ showModal('申请成功', '注册成功，请等待管理员审核'); } else { showModal('注册失败', d.error||'注册失败'); } } catch(e){ showModal('错误', '注册失败，请稍后重试'); } }
     window.addEventListener('load', init);
   </script>
+  
+  <!-- Custom Modal -->
+  <div id="customModal" class="modal-overlay"> 
+      <div class="modal-box"> 
+          <h3 id="modalTitle" class="modal-title">提示</h3> 
+          <div id="modalMessage" class="modal-content"></div> 
+          <div class="modal-actions"> 
+              <button id="modalCancelBtn" class="modal-btn btn-cancel">取消</button> 
+              <button id="modalConfirmBtn" class="modal-btn btn-confirm">确定</button> 
+          </div> 
+      </div> 
+  </div>
+  <script src="modal.js"></script>
 </body>
 </html>

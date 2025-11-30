@@ -88,33 +88,50 @@ function renderUserTables(users) {
 }
 
 window.approveUser = async (id) => {
-  const supabase = await getSupabase();
-  if (!supabase) return;
-  const { error } = await supabase.from('users').update({ status: 'member' }).eq('id', id);
-  if (!error) { loadUsers(); }
-  else alert('操作失败:' + error.message);
+  showModal('确认操作', '确定批准该用户成为会员吗？', async () => {
+      const supabase = await getSupabase();
+      if (!supabase) return;
+      const { error } = await supabase.from('users').update({ status: 'member' }).eq('id', id);
+      if (!error) { 
+          showModal('成功', '已批准用户');
+          loadUsers(); 
+      }
+      else showModal('操作失败', error.message);
+  });
 };
 
 window.rejectUser = async (id) => {
-  if(!confirm('确定拒绝并删除该申请吗？')) return;
-  const supabase = await getSupabase();
-  if (!supabase) return;
-  const { error } = await supabase.from('users').delete().eq('id', id);
-  if (!error) { loadUsers(); }
-  else alert('操作失败:' + error.message);
+  showModal('⚠️ 风险操作', '确定拒绝并删除该申请吗？此操作不可撤销。', async () => {
+      const supabase = await getSupabase();
+      if (!supabase) return;
+      const { error } = await supabase.from('users').delete().eq('id', id);
+      if (!error) { 
+          showModal('成功', '已删除申请');
+          loadUsers(); 
+      }
+      else showModal('操作失败', error.message);
+  });
 };
 
 window.toggleBlock = async (id, currentStatus) => {
   const action = currentStatus === 'blacklisted' ? 'restore' : 'block';
-  if (!confirm(`确定要${action === 'block' ? '拉黑' : '恢复'}该用户吗？`)) return;
-  
-  const newStatus = action === 'block' ? 'blacklisted' : 'member';
-  const supabase = await getSupabase();
-  if (!supabase) return;
-  
-  const { error } = await supabase.from('users').update({ status: newStatus }).eq('id', id);
-  if (!error) { loadUsers(); }
-  else alert('操作失败:' + error.message);
+  const title = action === 'block' ? '⚠️ 风险操作' : '确认恢复';
+  const msg = action === 'block' 
+      ? '确定要将该用户加入黑名单吗？此操作将禁止其访问核心功能。'
+      : '确定要恢复该用户的会员权限吗？';
+
+  showModal(title, msg, async () => {
+      const newStatus = action === 'block' ? 'blacklisted' : 'member';
+      const supabase = await getSupabase();
+      if (!supabase) return;
+      
+      const { error } = await supabase.from('users').update({ status: newStatus }).eq('id', id);
+      if (!error) { 
+          showModal('操作成功', action === 'block' ? '用户已拉黑' : '用户已恢复');
+          loadUsers(); 
+      }
+      else showModal('出错啦', error.message);
+  });
 };
 
 // Helper for logout

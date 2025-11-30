@@ -70,7 +70,21 @@
   <footer class="site-footer">
     <small>仅管理员可访问；所有操作将记录于数据库。</small>
   </footer>
+  
+  <!-- Custom Modal -->
+  <div id="customModal" class="modal-overlay"> 
+      <div class="modal-box"> 
+          <h3 id="modalTitle" class="modal-title">提示</h3> 
+          <div id="modalMessage" class="modal-content"></div> 
+          <div class="modal-actions"> 
+              <button id="modalCancelBtn" class="modal-btn btn-cancel">取消</button> 
+              <button id="modalConfirmBtn" class="modal-btn btn-confirm">确定</button> 
+          </div> 
+      </div> 
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="admin.js?v=4"></script>
+  <script src="modal.js"></script>
+  <script src="admin.js?v=5"></script>
 </body>
 </html>
