@@ -169,8 +169,11 @@ async function loadCategories(){
     const row = document.createElement('div');
     row.style.display='flex'; row.style.justifyContent='space-between'; row.style.alignItems='center'; row.style.margin='6px 0';
     const name = document.createElement('span'); name.textContent = `${c.name} (${c.id})`;
-    const del = document.createElement('button'); del.className='btn'; del.textContent='删除'; del.onclick = async ()=>{ if (c.id==='qita'){ alert('“其他”不可删除'); return; } const rr = await api(`/api/categories?id=${encodeURIComponent(c.id)}`,'DELETE'); if (!rr.ok){ alert((rr.body&&rr.body.error)||'删除失败'); } await loadCategories(); await loadReports(); };
-    row.appendChild(name); row.appendChild(del);
+    const actions = document.createElement('div'); actions.style.display='flex'; actions.style.gap='8px';
+    const renameBtn = document.createElement('button'); renameBtn.className='btn'; renameBtn.textContent='重命名'; renameBtn.onclick = ()=> renameCategory(c);
+    const delBtn = document.createElement('button'); delBtn.className='btn danger'; delBtn.textContent='删除'; delBtn.onclick = ()=> deleteCategory(c);
+    actions.appendChild(renameBtn); actions.appendChild(delBtn);
+    row.appendChild(name); row.appendChild(actions);
     frag.appendChild(row);
   });
   list.appendChild(frag);
@@ -227,4 +230,47 @@ async function saveReportUpdate(id, obj){
   const r = await api(`/api/reports?id=${encodeURIComponent(id)}`,'PUT', obj);
   if (!r.ok){ alert((r.body&&r.body.error)||'更新失败'); return; }
   await loadReports();
+}
+
+function renameCategory(c){
+  const html = `
+    <div class="login-form-wrapper">
+      <div class="input-group">
+        <label>新的分类名称</label>
+        <input id="renameCategoryName" type="text" class="clean-input" placeholder="请输入分类名称" value="${c.name}">
+      </div>
+      <div id="renameErr" class="error-text"></div>
+    </div>
+  `;
+  showModal('重命名分类', html, async () => {
+    const input = document.getElementById('renameCategoryName');
+    const err = document.getElementById('renameErr');
+    const name = (input.value||'').trim();
+    if(!name){ err.textContent='请输入分类名称'; return false; }
+    const r = await api('/api/categories','PUT',{ id:c.id, name });
+    if(!r.ok){ err.textContent = (r.body&&r.body.error)||'重命名失败'; return false; }
+    await loadCategories();
+    await loadReports();
+  });
+  const btn = document.getElementById('modalConfirmBtn'); if(btn) btn.innerText='保存';
+}
+
+function deleteCategory(c){
+  const html = `
+    <div class="login-form-wrapper">
+      <div class="input-group">
+        <label>确认删除分类：${c.name}</label>
+        <input type="text" class="clean-input" value="${c.id}" disabled>
+      </div>
+      <div class="error-text">删除后其下报告将归入“其他”。</div>
+    </div>
+  `;
+  showModal('删除分类', html, async () => {
+    if(c.id==='qita'){ showModal('提示','“其他”不可删除'); return; }
+    const rr = await api(`/api/categories?id=${encodeURIComponent(c.id)}`,'DELETE');
+    if (!rr.ok){ showModal('删除失败', (rr.body&&rr.body.error)||'删除失败'); return; }
+    await loadCategories();
+    await loadReports();
+  });
+  const btn = document.getElementById('modalConfirmBtn'); if(btn) btn.innerText='删除';
 }

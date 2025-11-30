@@ -877,34 +877,53 @@
   window.deleteCategory = async function(id) {
     const cat = window.categories.find(c=>c.id===id);
     if (!cat) return;
-    if (!confirm(`确定删除分类 "${cat.name}" 吗？相关项目将移至 "其他" 分类。`)) return;
-    const r = await window.api(`/api/categories?id=${encodeURIComponent(cat.id)}`,'DELETE');
-    if (!r.ok){ alert((r.body&&r.body.error)||'删除失败'); return; }
-    // Optimistic update
-    window.reports.forEach(x=>{ if (x.category===cat.id) x.category='qita'; });
-    await window.loadData();
-    window.currentCatFilter = 'ALL';
-    window.renderCategoryList();
-    window.renderTabs();
-    window.renderList();
+    const html = `
+      <div class="login-form-wrapper">
+        <div class="input-group">
+          <label>确认删除分类：${cat.name}</label>
+          <input type="text" class="clean-input" value="${cat.id}" disabled>
+        </div>
+        <div class="error-text">删除后相关项目将移至“其他”。</div>
+      </div>
+    `;
+    window.showModal('删除分类', html, async () => {
+      if (cat.id==='qita'){ window.showModal('提示','“其他”不可删除'); return; }
+      const r = await window.api(`/api/categories?id=${encodeURIComponent(cat.id)}`,'DELETE');
+      if (!r.ok){ window.showModal('删除失败', (r.body&&r.body.error)||'删除失败'); return; }
+      window.reports.forEach(x=>{ if (x.category===cat.id) x.category='qita'; });
+      await window.loadData();
+      window.currentCatFilter = 'ALL';
+      window.renderCategoryList();
+      window.renderTabs();
+      window.renderList();
+    });
+    const btn = document.getElementById('modalConfirmBtn'); if(btn) btn.innerText='删除';
   };
 
   window.editCategory = function(id) {
     const cat = window.categories.find(c=>c.id===id);
     if(!cat) return;
-    const newName = prompt('请输入新的分类名称:', cat.name);
-    if (newName && newName.trim()) {
-      // We need an API for this or just delete/create? 
-      // Assuming simple update isn't in API, or maybe POST with same ID? 
-      // Wait, API supports update? Previous code used local storage for edit.
-      // Since there's no API endpoint for updating category name shown in previous code, 
-      // we might just skip implementing it or assume we can't.
-      // However, user might expect it. 
-      // Let's try to just update locally? No, that won't persist.
-      // I'll alert not supported or try to create new and move?
-      // For now, let's just skip logic or do nothing.
-      alert('暂不支持重命名分类');
-    }
+    const html = `
+      <div class="login-form-wrapper">
+        <div class="input-group">
+          <label>新的分类名称</label>
+          <input id="renameCategoryName" type="text" class="clean-input" placeholder="请输入分类名称" value="${cat.name}">
+        </div>
+        <div id="renameErr" class="error-text"></div>
+      </div>
+    `;
+    window.showModal('重命名分类', html, async () => {
+      const input = document.getElementById('renameCategoryName');
+      const err = document.getElementById('renameErr');
+      const name = (input.value||'').trim();
+      if(!name){ err.textContent='请输入分类名称'; return false; }
+      const r = await window.api('/api/categories','PUT',{ id: cat.id, name });
+      if(!r.ok){ err.textContent = (r.body&&r.body.error)||'重命名失败'; return false; }
+      await window.loadData();
+      window.renderCategoryList();
+      window.renderTabs();
+    });
+    const btn = document.getElementById('modalConfirmBtn'); if(btn) btn.innerText='保存';
   };
 
   // ============================================

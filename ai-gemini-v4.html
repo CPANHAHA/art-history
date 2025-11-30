@@ -18,6 +18,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" integrity="sha512-qZvrmS2ekKPF2mSznTQsxqPgnpkI4DNTlrdUmTzrDgektczlKNRRhy5X5AAOnx5S09ydFYWWNSfcEqDTTHgtNA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <link rel="stylesheet" href="styles.css">
+  <script src="modal.js"></script>
   <style>
     :root {
       /* 核心色板 */
@@ -2126,5 +2127,15 @@ Ticker/代币符号: ${ticker}`;
   }catch(e){ localStorage.setItem('local_migrated_v1','1'); }
   const __orig_init = init; init = async function(){ await migrateFromLocal(); await loadData(); if (reports.length>0){ currentReportId = reports.find(r=>!r.is_deleted)?.id || null; } renderTabs(); renderList(); renderDetail(); };
 -->
+<div id="customModal" class="modal-overlay">
+    <div class="modal-box">
+          <h3 id="modalTitle" class="modal-title">提示</h3>
+          <div id="modalMessage" class="modal-content"></div>
+          <div class="modal-actions">
+            <button id="modalCancelBtn" class="modal-btn btn-cancel">取消</button>
+            <button id="modalConfirmBtn" class="modal-btn btn-confirm">确定</button>
+        </div>
+    </div>
+</div>
 </body>
 </html>

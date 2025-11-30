@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="/styles.css">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤖</text></svg>">
+  <script src="modal.js"></script>
   <script>
     (function(){
       try{
@@ -16,32 +17,8 @@
       }catch(e){}
     })();
   </script>
-  <style>
-    :root { --bg-app:#020617; --bg-card:#1e293b; --bg-sidebar:#0f172a; --text-main:#f1f5f9; --text-muted:#94a3b8; --accent:#38bdf8; --accent-hover:#0ea5e9; --border:#334155; --radius-md:8px; --radius-lg:12px }
-    *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg-app);color:var(--text-main);height:100vh;overflow:hidden;line-height:1.6}
-    .container{max-width:1100px;margin:0 auto;padding:0 20px}
-    /* Navbar styles moved to styles.css */
-    .btn{padding:.5rem 1rem;border-radius:var(--radius-md);border:1px solid var(--border);background:var(--bg-card);color:var(--text-main);text-decoration:none;font-size:.9rem;font-weight:500;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:.5rem}
-    .btn:hover{border-color:var(--accent);color:var(--accent)}
-    .btn-primary{background:var(--accent);border-color:var(--accent);color:#0b1120}
-    .btn-primary:hover{background:var(--accent-hover);color:#000}
-    .hero{padding:3rem 0;text-align:center;background:radial-gradient(circle at top right,#1e293b 0%,#020617 40%)}
-    .hero h1{font-size:2.4rem;font-weight:700;margin-bottom:.6rem;background:linear-gradient(135deg,var(--accent),#a855f7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-    .hero p{font-size:1rem;color:var(--text-muted);max-width:680px;margin:0 auto 1.4rem}
-    .card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;margin:1rem 0}
-    .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-    .field{display:flex;flex-direction:column}
-    .field label{font-size:14px;color:var(--text-muted);margin-bottom:6px}
-    .field input,.field textarea,.field select{background:transparent;color:var(--text-main);border:1px solid var(--border);border-radius:10px;padding:10px;font-size:15px}
-    .section-title{font-size:1.4rem;font-weight:700;margin-bottom:.6rem}
-    .actions{margin-top:12px;display:flex;gap:12px;flex-wrap:wrap}
-    .preview{margin-top:14px;background:#0b1220;border:1px solid var(--border);border-radius:12px;padding:14px}
-    .error{color:#ffb4b4}
-    @media (max-width:768px){.grid{grid-template-columns:1fr}}
-  </style>
 </head>
-<body>
+<body class="page-invest">
   <nav class="navbar">
     <div class="nav-brand">
       <a href="/" style="display: flex; align-items: center; gap: 12px; text-decoration: none;">
@@ -54,7 +31,18 @@
   
   <!-- Use .main-content for visual layering and spacing -->
   <div class="main-content">
-    <iframe id="geminiFrame" src="/ai-gemini-v4.html" style="width:100%; height:100%; border:0; border-radius: 12px; background:#0b1220"></iframe>
+    <iframe id="geminiFrame" src="/ai-gemini-v4.html" class="gemini-frame"></iframe>
+  </div>
+
+  <div id="customModal" class="modal-overlay">
+      <div class="modal-box">
+            <h3 id="modalTitle" class="modal-title">提示</h3>
+            <div id="modalMessage" class="modal-content"></div>
+            <div class="modal-actions">
+              <button id="modalCancelBtn" class="modal-btn btn-cancel">取消</button>
+              <button id="modalConfirmBtn" class="modal-btn btn-confirm">确定</button>
+          </div>
+      </div>
   </div>
 
   <script>

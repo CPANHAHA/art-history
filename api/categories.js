@@ -23,6 +23,22 @@ module.exports = async function(req, res){
     if (!ins.ok){ const txt = await ins.text().catch(()=> ''); res.status(400).json({ error:'create failed', status: ins.status, detail: txt }); return; }
     const out = await ins.json(); res.setHeader('Cache-Control','no-store'); res.status(201).json(out[0]); return;
   }
+  if (req.method === 'PUT'){
+    if (!process.env.SUPABASE_SERVICE_ROLE_KEY){ res.status(500).json({ error:'service role key missing' }); return; }
+    const sess = requireRole(req, res, ['admin']); if (!sess) return;
+    const body = req.body || {}; const cid = String(body.id||'').trim(); const name = String(body.name||'').trim();
+    if (!cid){ res.status(400).json({ error:'id required' }); return; }
+    if (!name){ res.status(400).json({ error:'name required' }); return; }
+    const h = headersJson();
+    const ex = await fetch(`${url}/rest/v1/categories?id=eq.${encodeURIComponent(cid)}&select=id`, { headers: h });
+    if (!ex.ok){ res.status(500).json({ error:'existence check failed' }); return; }
+    const rows = await ex.json(); if (!Array.isArray(rows)||!rows[0]){ res.status(404).json({ error:'Category not found' }); return; }
+    const dup = await fetch(`${url}/rest/v1/categories?name=eq.${encodeURIComponent(name)}&select=id`, { headers: h });
+    if (dup.ok){ const drows = await dup.json(); if (Array.isArray(drows)&&drows[0]&&drows[0].id!==cid){ res.status(409).json({ error:'category exists' }); return; } }
+    const upd = await fetch(`${url}/rest/v1/categories?id=eq.${encodeURIComponent(cid)}`, { method:'PATCH', headers:h, body: JSON.stringify({ name }) });
+    if (!upd.ok){ const txt = await upd.text().catch(()=> ''); res.status(400).json({ error:'update failed', status: upd.status, detail: txt }); return; }
+    res.setHeader('Cache-Control','no-store'); res.status(200).json({ success:true }); return;
+  }
   if (req.method === 'DELETE'){
     if (!process.env.SUPABASE_SERVICE_ROLE_KEY){ res.status(500).json({ error:'service role key missing' }); return; }
     const sess = requireRole(req, res, ['admin']); if (!sess) return;
