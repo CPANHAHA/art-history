@@ -204,3 +204,81 @@ button.logout-btn:hover{background-color:var(--danger-color);color:#fff;border-c
   color: var(--accent-color);
   background-color: rgba(59, 130, 246, 0.05);
 }
+
+  /* AI 评分区域特定样式 - 深色背景 */
+  .ai-score-section {
+    background-color: #0f172a !important;
+  }
+  
+  .ai-score-section:hover {
+    background-color: #0f172a !important;
+    border-color: var(--accent);
+    box-shadow: 0 4px 12px rgba(56, 189, 248, 0.1);
+  }
+
+  /* 报告卡片样式 */
+  .report-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .report-card::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background-color: var(--accent-color, #38bdf8); /* 默认颜色 */
+  }
+  
+  .report-card h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    font-size: 1.25rem;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .report-card h3::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+    opacity: 0.5;
+  }
+  
+  /* Markdown 内容样式优化 */
+  .report-card p {
+    line-height: 1.7;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+  }
+  
+  .report-card ul, .report-card ol {
+    padding-left: 20px;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+  }
+  
+  .report-card li {
+    margin-bottom: 0.5rem;
+  }
+  
+  .report-card strong {
+    color: var(--text-primary);
+  }
+
+  /* 不同类型的卡片颜色重音 */
+  .card-team { --accent-color: #a855f7; }
+  .card-token { --accent-color: #22c55e; }
+  .card-business { --accent-color: #eab308; }
+  .card-competitors { --accent-color: #f97316; }
+  .card-roadmap { --accent-color: #38bdf8; }

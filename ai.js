@@ -82,12 +82,7 @@
       out.basic_info = out.basic_info || { summary:'', core_features: [] };
     }
     
-    out.team = out.team || { description:'' };
-    out.tokenomics = out.tokenomics || { description:'' };
-    out.business_potential = out.business_potential || { analysis:'' };
-    out.competitors = out.competitors || { summary:'', main_competitors: [] };
-    out.focus_points = Array.isArray(out.focus_points)? out.focus_points : [];
-    
+    // Normalize score
     const s = out.ai_score || {}; 
     out.ai_score = {
       overall: parseFloat(s.overall)||0,
@@ -99,9 +94,82 @@
       score_explanation: s.score_explanation || ''
     };
     
+    out.focus_points = Array.isArray(out.focus_points)? out.focus_points : [];
     out.meta = out.meta || { generated_at: new Date().toISOString(), source_url:'', notes:'' };
+
+    // Build detailed_analysis if missing (Backward Compatibility)
+    if (!out.detailed_analysis) {
+        let parts = [];
+        if (out.team && out.team.description) parts.push(`### 团队背景\n${out.team.description}`);
+        if (out.tokenomics && out.tokenomics.description) parts.push(`### 代币经济\n${out.tokenomics.description}`);
+        if (out.business_potential && out.business_potential.analysis) parts.push(`### 商业潜力\n${out.business_potential.analysis}`);
+        if (out.competitors) {
+             let cText = out.competitors.summary || '';
+             if (out.competitors.main_competitors && out.competitors.main_competitors.length) {
+                 cText += '\n\n**主要竞品:**\n' + out.competitors.main_competitors.map(x=>`- ${x}`).join('\n');
+             }
+             if (cText) parts.push(`### 竞品分析\n${cText}`);
+        }
+        if (out.current_progress_and_roadmap) {
+            let rText = '';
+            if(out.current_progress_and_roadmap.current_status) rText += `**当前状态:** ${out.current_progress_and_roadmap.current_status}\n`;
+            if(out.current_progress_and_roadmap.future_plan) rText += `**未来计划:** ${out.current_progress_and_roadmap.future_plan}`;
+            if (rText) parts.push(`### 进度与路线图\n${rText}`);
+        }
+        out.detailed_analysis = parts.join('\n\n');
+    }
+
     return out;
   }
+
+  // ============================================
+  // 2.1 Card Renderer
+  // ============================================
+  window.renderReportCards = function(text) {
+    if (!text) return '';
+    if (typeof marked === 'undefined') return `<div class="content-section"><div class="content-text"><pre>${text}</pre></div></div>`;
+    
+    const getCardClass = (title) => {
+      if (title.includes('团队')) return 'card-team';
+      if (title.includes('代币') || title.includes('模型') || title.includes('经济')) return 'card-token';
+      if (title.includes('商业') || title.includes('潜力') || title.includes('盈利')) return 'card-business';
+      if (title.includes('竞品') || title.includes('竞争')) return 'card-competitors';
+      if (title.includes('路线') || title.includes('进展') || title.includes('规划')) return 'card-roadmap';
+      return '';
+    };
+
+    const lines = text.split('\n');
+    let html = '';
+    let currentTitle = '';
+    let currentContent = [];
+    
+    const flush = () => {
+      if (!currentTitle && currentContent.length === 0) return;
+      const contentMd = currentContent.join('\n').trim();
+      if (!contentMd && !currentTitle) return;
+      
+      const cls = getCardClass(currentTitle);
+      const parsed = marked.parse(contentMd);
+      
+      html += `<div class="report-card ${cls}">
+        ${currentTitle ? `<h3>${currentTitle}</h3>` : ''}
+        ${parsed}
+      </div>`;
+    };
+
+    lines.forEach(line => {
+      if (line.trim().startsWith('### ')) {
+        flush();
+        currentTitle = line.trim().replace(/^###\s+/, '');
+        currentContent = [];
+      } else {
+        currentContent.push(line);
+      }
+    });
+    flush();
+    
+    return html;
+  };
 
   // ============================================
   // 3. Rendering
@@ -307,21 +375,8 @@
       `;
     }
 
-    if (c.team) html += renderSection('团队背景', `<p>${c.team.description || '暂无信息'}</p>`, false, 'section-team');
-    if (c.tokenomics) html += renderSection('代币经济', `<p>${c.tokenomics.description || '暂无信息'}</p>`, false, 'section-tokenomics');
-    if (c.business_potential) html += renderSection('商业潜力', `<p>${c.business_potential.analysis || '暂无分析'}</p>`, false, 'section-business');
-    if (c.competitors) {
-      let compHTML = `<p>${c.competitors.summary || '暂无总结'}</p>`;
-      if (c.competitors.main_competitors?.length) {
-        compHTML += `<strong>主要竞品:</strong> <ul>${c.competitors.main_competitors.map(x=>`<li>${x}</li>`).join('')}</ul>`;
-      }
-      html += renderSection('竞品分析', compHTML, false, 'section-competitors');
-    }
-    if (c.current_progress_and_roadmap) {
-      html += renderSection('进度与路线图', `
-          <p><strong>当前状态:</strong> ${c.current_progress_and_roadmap.current_status || '未知'}</p>
-          <p><strong>未来计划:</strong> ${c.current_progress_and_roadmap.future_plan || '未知'}</p>
-      `, false);
+    if (c.detailed_analysis) {
+      html += window.renderReportCards(c.detailed_analysis);
     }
     
     if (c.meta) {
@@ -888,11 +943,7 @@
   "launchpad": "launchpad 平台或 '信息不足'", 
   "tagline": "一句话概括核心定位", 
   "basic_info": { "summary": "1-2 段概述", "core_features": [ "核心特点" ] }, 
-  "team": { "description": "团队背景", "is_ai_inferred": false }, 
-  "tokenomics": { "description": "代币机制", "is_ai_inferred": false }, 
-  "business_potential": { "analysis": "商业分析", "is_ai_inferred": false }, 
-  "competitors": { "summary": "竞品简介", "main_competitors": [ "竞品" ], "is_ai_inferred": false }, 
-  "current_progress_and_roadmap": { "current_status": "当前状态", "future_plan": "未来计划" },
+  "detailed_analysis": "请在此处输出完整的研报内容，必须包含以下章节，并严格使用###作为章节标题（例如：### 团队背景）：\\n\\n### 团队背景\\n[内容]\\n\\n### 代币经济\\n[内容]\\n\\n### 商业潜力\\n[内容]\\n\\n### 竞品分析\\n[内容]\\n\\n### 进度与路线图\\n[内容]",
   "meta": { "generated_at": "${new Date().toISOString()}", "notes": "用户备注: ${note}" }
 }`;
     document.getElementById('pOutput').value = prompt;
