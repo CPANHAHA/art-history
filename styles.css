@@ -812,3 +812,48 @@ body .modal-actions {
     z-index: 20 !important; 
     margin-top: 10px !important; 
 }
+
+/* ==================== 
+   弹窗 UI 最终微调 (Final Polish) 
+   ==================== */ 
+
+/* 1. 修复按钮重叠：给输入框下方增加强制间距 */ 
+body .modal-box input { 
+    margin-bottom: 24px !important; /* 增加到底部的距离 */ 
+} 
+
+/* 2. 确保按钮容器是独立的块级元素，且居中 */ 
+body .modal-actions { 
+    margin-top: 10px !important; 
+    position: static !important; /* 取消任何可能的绝对定位 */ 
+    width: 100% !important; 
+    display: flex !important; 
+    justify-content: center !important; 
+    padding-bottom: 5px !important; 
+} 
+
+/* 3. 登录弹窗专用优化：让标签文字更好看 */ 
+body .modal-box label { 
+    margin-bottom: 8px !important; 
+    font-size: 0.85rem !important; 
+    color: #94a3b8 !important; 
+    padding-left: 2px !important; /* 稍微缩进对齐 */ 
+} 
+
+/* 4. 修复拉黑弹窗文字居中问题 */ 
+body .modal-content { 
+    text-align: center !important; 
+    line-height: 1.6 !important; 
+    padding: 0 10px !important; /* 防止文字贴边 */ 
+} 
+
+/* 5. 按钮微调：让它看起来更像按钮，而不是方块 */ 
+body .modal-btn { 
+    min-width: 110px !important; 
+    height: 40px !important; /* 固定高度 */ 
+    display: flex !important; 
+    align-items: center !important; 
+    justify-content: center !important; 
+    font-weight: 500 !important; 
+    letter-spacing: 0.5px !important; 
+}
