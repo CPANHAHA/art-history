@@ -92,3 +92,115 @@ button.logout-btn:hover{background-color:var(--danger-color);color:#fff;border-c
   .nav-links{gap:10px}
   .nav-item{padding:5px 8px}
 }
+
+/* ==================== Main Content Layout ==================== */
+.main-content {
+  /* Push content down to avoid nav overlap and create breathing room */
+  padding-top: 40px;
+  /* Limit width for large screens */
+  max-width: 1400px;
+  margin: 0 auto;
+  padding-left: 20px;
+  padding-right: 20px;
+  height: calc(100vh - 64px); /* Adjust for navbar height */
+  display: flex;
+  flex-direction: column;
+}
+
+/* ==================== Page Toolbar Styles ==================== */
+.page-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* Background color distinct from dark blue base */
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 16px 24px;
+  margin-bottom: 24px;
+  /* margin-top is handled by main-content padding */
+}
+
+/* Toolbar Left Section */
+.toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  background-color: var(--accent-color);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--accent-color);
+}
+
+.page-title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Toolbar Actions (Right) */
+.toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Search Box */
+.search-box {
+  position: relative;
+  margin-right: 10px;
+}
+
+.search-box input {
+  background: #0f1218;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 8px 12px 8px 32px;
+  color: white;
+  font-size: 0.9rem;
+  width: 200px;
+  transition: width 0.3s;
+}
+
+.search-box i {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-secondary);
+}
+
+.search-box input:focus {
+  width: 260px;
+  border-color: var(--accent-color);
+  outline: none;
+}
+
+/* Secondary Button */
+.btn-secondary {
+  background-color: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+
+.btn-secondary:hover {
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+  background-color: rgba(59, 130, 246, 0.05);
+}

@@ -59,37 +59,131 @@
     }
 
     /* --- 布局框架 --- */
-    .app-header {
-      height: 60px;
-      border-bottom: 1px solid var(--border);
-      background: var(--bg-sidebar);
+    /* 移除旧的 app-header 样式，改为 Toolbar 布局 */
+    
+    .app-container {
       display: flex;
-      align-items: center;
+      flex-direction: column;
+      height: 100vh;
+      padding: 20px 24px;
+      max-width: 1600px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* ====================
+       页面工具栏样式 (Page Toolbar)
+       ==================== */
+    .page-toolbar {
+      display: flex;
       justify-content: space-between;
-      padding: 0 24px;
+      align-items: center;
+      
+      /* 核心：给它一个背景色，和深蓝底色区分开 */
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px; /* 圆角 */
+      
+      padding: 16px 24px;
+      margin-bottom: 20px; /* 让它和下面的内容拉开距离 */
       flex-shrink: 0;
     }
-    
-    .logo-area {
+
+    /* 左侧标题区 */
+    .toolbar-left {
       display: flex;
       align-items: center;
       gap: 12px;
-      font-weight: 700;
-      font-size: 18px;
-      letter-spacing: -0.5px;
     }
-    .logo-dot {
-      width: 10px;
-      height: 10px;
-      background: var(--accent);
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background-color: var(--accent);
       border-radius: 50%;
-      box-shadow: 0 0 12px var(--accent);
+      box-shadow: 0 0 8px var(--accent);
+    }
+
+    .page-title {
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .badge {
+      font-size: 0.75rem;
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--accent);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: normal;
+    }
+
+    /* 右侧按钮区 */
+    .toolbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* 搜索框美化 */
+    .search-box {
+      position: relative;
+    }
+    .search-box input {
+      background: #0f1218;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px 12px 8px 32px; /* 左边留出图标位置 */
+      color: var(--text-main);
+      font-size: 0.9rem;
+      width: 200px;
+      transition: width 0.3s, border-color 0.2s;
+    }
+    .search-box i {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+    }
+    .search-box input:focus {
+      width: 260px; /* 聚焦变长 */
+      border-color: var(--accent);
+      outline: none;
+    }
+
+    /* 次级按钮样式 (Toolbar Buttons) */
+    .btn-secondary {
+      background-color: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .btn-secondary:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background-color: rgba(56, 189, 248, 0.05);
     }
 
     .app-body {
       flex: 1;
       display: flex;
       overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--bg-sidebar);
     }
 
     /* --- 左侧侧边栏 --- */
@@ -102,23 +196,8 @@
       flex-shrink: 0;
     }
     
-    .sidebar-toolbar {
-      padding: 16px;
-      border-bottom: 1px solid var(--border);
-    }
-    
-    .search-input {
-      width: 100%;
-      background: var(--bg-input);
-      border: 1px solid var(--border);
-      color: var(--text-main);
-      padding: 8px 12px;
-      border-radius: var(--radius-md);
-      font-size: 14px;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-    .search-input:focus { border-color: var(--accent); }
+    /* 移除旧的 sidebar-toolbar */
+    .sidebar-toolbar { display: none; }
 
     .category-tabs {
       display: flex;
@@ -575,28 +654,35 @@
     ::-webkit-scrollbar-thumb:hover { background: #475569; }
   </style>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤖</text></svg>">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
   <script defer src="/ai.js"></script>
 </head>
 <body>
 
-<header class="app-header">
-  <div class="logo-area">
-    <div class="logo-dot"></div>
-    <span>AI 投研助手 V3 (新评分模型)</span>
-  </div>
-  <div style="display:flex; gap:12px;">
-    <button class="btn" id="navBtnPrompt">+ 生成 Prompt</button>
-    <button class="btn" id="navBtnImport">⬇ 导入报告</button>
-  </div>
-</header>
+<div class="app-container">
 
-<div class="app-body">
-  <aside class="sidebar">
-    <div class="sidebar-toolbar">
-      <input id="searchInput" class="search-input" placeholder="搜索项目..." />
+  <header class="page-toolbar">
+    <div class="toolbar-left">
+      <div class="status-dot"></div>
+      <h2 class="page-title">AI 投研助手 V3 <span class="badge">新评分模型</span></h2>
     </div>
-    
-    <div class="category-tabs" id="categoryTabs">
+
+    <div class="toolbar-actions">
+      <div class="search-box">
+        <i class="ri-search-line"></i>
+        <input id="searchInput" type="text" placeholder="搜索项目...">
+      </div>
+      <button class="btn-secondary" id="navBtnPrompt"><i class="ri-magic-line"></i> 生成 Prompt</button>
+      <button class="btn-secondary" id="navBtnImport"><i class="ri-upload-cloud-line"></i> 导入报告</button>
+    </div>
+  </header>
+
+  <div class="app-body">
+    <aside class="sidebar">
+      <!-- searchInput moved to top toolbar -->
+      <div class="sidebar-toolbar" style="display:none;"></div> 
+      
+      <div class="category-tabs" id="categoryTabs">
       </div>
     
     <div style="padding: 12px 16px 4px; display:flex; justify-content:space-between; align-items:center;">
